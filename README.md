@@ -70,6 +70,8 @@ Otros lanzadores:
 | `abrir_movil.bat` | La web como se ve en un teléfono (Chrome en modo app, 430×880, *user-agent* Android). |
 | `arrancar_desarrollo.bat` | API + Vite con recarga en caliente (puerto 5173). |
 | `restaurar_datos_demo.bat` | Deja `data2026.json` como estaba antes de trastear. |
+| `python scripts/probar_api.py` | Prueba de punta a punta con la API levantada: login → ticket → canje → el mismo ticket otra vez (401) → fichajes. |
+| `python scripts/fuente_editor_pb.py` | Pone **Consolas** en el editor de PowerBuilder, que viene con Tahoma (proporcional). Con el IDE cerrado; `--aplicar` para escribir. |
 
 ## 📚 Antes de esta charla
 
