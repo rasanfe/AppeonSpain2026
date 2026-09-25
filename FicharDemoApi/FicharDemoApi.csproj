@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>FicharApi</RootNamespace>
+    <AssemblyName>FicharDemoApi</AssemblyName>
+    <!-- La demo viaja a otra maquina: se publica autocontenida en un solo .exe -->
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ORM DataWindow de Appeon: la 5.1.0 ya soporta net10.0 -->
+    <PackageReference Include="DWNet.Data" Version="5.1.0" />
+    <PackageReference Include="DWNet.Data.AspNetCore" Version="5.1.0" />
+    <PackageReference Include="SnapObjects.Data" Version="5.1.0" />
+    <PackageReference Include="SnapObjects.Data.AspNetCore" Version="5.1.0" />
+    <PackageReference Include="SnapObjects.Data.SqlServer" Version="5.1.0" />
+    <!-- Seguridad: lo que en 2024 NO estaba -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+  </ItemGroup>
+
+</Project>

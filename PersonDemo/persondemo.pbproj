@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Project>
+  <Type Name="pb"/>
+  <Application Name="persondemo"/>
+  <Libraries AppEntry="persondemo.pbl">
+    <Library Path="persondemo.pbl"/>
+    <Library Path="json.pbl"/>
+    <Library Path="topwiz.pbl"/>
+    <Library Path="dashboards.pbl"/>
+  </Libraries>
+  <Deployings>
+    <Deploying Deploy="1" Library="persondemo.pbl" Name="powerclient"/>
+    <Deploying Deploy="1" Library="persondemo.pbl" Name="pbnative"/>
+  </Deployings>
+</Project>

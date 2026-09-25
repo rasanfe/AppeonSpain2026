@@ -1,0 +1,46 @@
+﻿global type gf_replaceall from function_object
+end type
+
+forward prototypes
+global function string gf_replaceall (string as_source, string as_replaced, string as_new)
+end prototypes
+
+global function string gf_replaceall (string as_source, string as_replaced, string as_new);
+//╔═════════════════════════════════════════════════════════════════════════════════╗
+//║                                                                                 ║
+//║  ██████╗ ███████╗██████╗ ███████╗██╗   ██╗███████╗████████╗███████╗███╗   ███╗  ║
+//║  ██╔══██╗██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝██╔════╝╚══██╔══╝██╔════╝████╗ ████║  ║
+//║  ██████╔╝███████╗██████╔╝███████╗ ╚████╔╝ ███████╗   ██║   █████╗  ██╔████╔██║  ║
+//║  ██╔══██╗╚════██║██╔══██╗╚════██║  ╚██╔╝  ╚════██║   ██║   ██╔══╝  ██║╚██╔╝██║  ║
+//║  ██║  ██║███████║██║  ██║███████║   ██║   ███████║   ██║   ███████╗██║ ╚═╝ ██║  ║
+//║  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝  ║
+//║                                                                                 ║
+//╚═════════════════════════════════════════════════════════════════════════════════╝
+//
+//10-09-2026: gf_replaceall.srf
+//Autor: Ramón San Félix Ramón
+//Email: rsanfelix@rsrsystem.com
+//Web:   rsrsystem.blogspot.com
+//
+//  Appeon PowerBuilder Regional Conference Spain 2026
+//  Barcelona, 27 de octubre de 2026
+//  Ponencia: «Modernizando PowerBuilder con tecnologías web»
+// Esta funcion reemplaza todas las ocurrencias de as_replaced por as_new en as_source y lo devuelve
+
+Long ll_StartPos=1
+
+// Find the first occurrence of as_replaced.
+ll_StartPos = Pos(as_source, as_replaced, ll_StartPos)
+
+// Only enter the loop if you find as_replaced.
+DO WHILE ll_StartPos > 0
+	   // Replace as_replaced with as_new.
+    as_source = Replace(as_source, ll_StartPos, Len(as_replaced), as_new)
+      // Find the next occurrence of as_replaced. 
+	ll_StartPos = Pos(as_source, as_replaced, ll_StartPos+Len(as_new))
+LOOP
+
+RETURN as_source  
+
+end function
+

@@ -1,0 +1,40 @@
+{
+	"meta-info": {
+		"version":"25.0.0.3711"
+	},
+	"u_em_campo_2": {
+		"drawing":false
+	},
+    "u_em_campo_2.em_campo": {
+		"drawing":false
+	},
+    "u_em_campo_2.em_codigo": {
+		"drawing":false
+	},
+    "u_em_campo_2.rr_border_rectangle": {
+		"drawing":false
+	},
+    "u_em_campo_2.rr_border_roundrectangle": {
+		"drawing":false
+	},
+    "u_em_campo_2.p_search": {
+		"drawing":false
+	},
+    "u_em_campo_2.p_remove": {
+		"drawing":false
+	},
+	"u_em_campo": {
+		"drawing":false
+	},
+	"u_statictext_raised": {
+		"drawing":false
+	}
+	,
+	"u_web_background": {
+		"drawing":false
+	}
+	,
+	"w_dashboard": {
+		"drawing":false
+	}
+}

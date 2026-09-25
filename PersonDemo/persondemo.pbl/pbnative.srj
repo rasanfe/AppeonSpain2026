@@ -1,0 +1,51 @@
+﻿//objectcomments  
+EXE:persondemo.exe,,0,1,1,0,C:\Program Files (x86)\Appeon\Common\PowerBuilder\Runtime 25.1.0.6430
+EXT:0
+CMP:0,0,0,3,0,0,1
+COM:RSRSYSTEM
+DES:PersonDemo
+CPY:Ramón San Félix Ramón
+PRD:PersonDemo
+PVS:2025.2.6430.7
+PVN:2025,2,6430,7
+FVS:2025.2.6430.7
+FVN:2025,2,6430,7
+MAN:0,asInvoker,0,0,0,0,0,0,,0,0,,0,,,,SHA256,http://timestamp.digicert.com,
+PBD:persondemo.pbl,,1
+PBD:json.pbl,,1
+PBD:topwiz.pbl,,1
+PBD:dashboards.pbl,,1
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\topwiz.pbl,os_systemdatetime,s
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,dw_mant_lista,d
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\json.pbl,gf_replaceall,f
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,u_dw,u
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\dashboards.pbl,str_dashboard_chart,s
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,w_setup,w
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,m_menu,m
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,gf_mensaje,f
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\dashboards.pbl,str_dashboard_card,s
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,persondemo,a
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,u_web_background,u
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\topwiz.pbl,n_osversion,u
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,w_fichar_html,w
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,gf_ventanas_abiertas,f
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\json.pbl,gf_iin,f
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\topwiz.pbl,gf_fecha_fichero,f
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,dw_new,d
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\dashboards.pbl,w_dashboard,w
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\topwiz.pbl,os_filedatetime,s
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,w_mant_facturas,w
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,w_frame,w
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\dashboards.pbl,n_cst_dashboard_ventas,u
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\topwiz.pbl,os_finddata,s
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,w_visor,w
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\json.pbl,gf_get_jsondata_from_file,f
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\dashboards.pbl,n_cst_dashboard,u
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,n_rbb,u
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\json.pbl,nvo_ds_json,u
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,w_con_facturas,w
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\dashboards.pbl,str_dashboard_config,s
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\json.pbl,vs_dw_json,u
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,dw_mant_detalle,d
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,w_about,w
+OBJ:C:\proyecto pw2025\Aprender\Softpi\AppeonSpain2026\PersonDemo\persondemo.pbl,u_ds,u

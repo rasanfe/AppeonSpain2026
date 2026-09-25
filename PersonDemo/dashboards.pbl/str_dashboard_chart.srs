@@ -1,0 +1,13 @@
+﻿global type str_dashboard_chart from structure
+	string		ls_titulo
+	string		ls_chart_type
+	string		ls_tamano
+	string		ls_etiquetas_x[]
+	string		ls_valores[]
+	string		ls_unidad_y
+	string		ls_formato_y
+	string ls_valores_serie2[]
+	string ls_label_serie1
+	string ls_label_serie2
+end type
+

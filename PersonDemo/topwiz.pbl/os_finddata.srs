@@ -1,0 +1,13 @@
+﻿global type os_finddata from structure
+	 unsignedlong		ul_fileattributes
+	 os_filedatetime		str_creationtime
+	 os_filedatetime		str_lastaccesstime
+	 os_filedatetime		str_lastwritetime
+	 unsignedlong		ul_filesizehigh
+	 unsignedlong		ul_filesizelow
+	 unsignedlong		ul_reserved0
+	 unsignedlong		ul_reserved1
+	character		ch_filename[260]
+	character		ch_alternatefilename[14]
+end type
+

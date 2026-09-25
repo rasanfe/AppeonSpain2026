@@ -1,0 +1,43 @@
+﻿global type gf_get_jsondata_from_file from function_object
+end type
+
+forward prototypes
+global function string gf_get_jsondata_from_file (string as_jsonfile)
+end prototypes
+
+global function string gf_get_jsondata_from_file (string as_jsonfile);
+//╔═════════════════════════════════════════════════════════════════════════════════╗
+//║                                                                                 ║
+//║  ██████╗ ███████╗██████╗ ███████╗██╗   ██╗███████╗████████╗███████╗███╗   ███╗  ║
+//║  ██╔══██╗██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝██╔════╝╚══██╔══╝██╔════╝████╗ ████║  ║
+//║  ██████╔╝███████╗██████╔╝███████╗ ╚████╔╝ ███████╗   ██║   █████╗  ██╔████╔██║  ║
+//║  ██╔══██╗╚════██║██╔══██╗╚════██║  ╚██╔╝  ╚════██║   ██║   ██╔══╝  ██║╚██╔╝██║  ║
+//║  ██║  ██║███████║██║  ██║███████║   ██║   ███████║   ██║   ███████╗██║ ╚═╝ ██║  ║
+//║  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝  ║
+//║                                                                                 ║
+//╚═════════════════════════════════════════════════════════════════════════════════╝
+//
+//10-09-2026: gf_get_jsondata_from_file.srf
+//Autor: Ramón San Félix Ramón
+//Email: rsanfelix@rsrsystem.com
+//Web:   rsrsystem.blogspot.com
+//
+//  Appeon PowerBuilder Regional Conference Spain 2026
+//  Barcelona, 27 de octubre de 2026
+//  Ponencia: «Modernizando PowerBuilder con tecnologías web»
+string ls_jsonData
+JsonGenerator lnv_JsonGenerator
+Long ll_RootArray
+
+lnv_JsonGenerator = Create JsonGenerator
+ 	 
+// Create an object root item
+lnv_JsonGenerator.ImportFile(as_jsonfile)
+
+// Gets the JSON string
+ls_jsonData = lnv_JsonGenerator.GetJsonString()
+
+Destroy lnv_JsonGenerator
+return ls_jsonData
+end function
+

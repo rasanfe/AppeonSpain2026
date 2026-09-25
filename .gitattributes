@@ -1,0 +1,2 @@
+# Los .bat necesitan CRLF: con LF, cmd.exe se salta lineas y las etiquetas
+*.bat text eol=crlf

@@ -1,0 +1,80 @@
+﻿global type gf_iin from function_object
+end type
+
+forward prototypes
+global function boolean gf_iin (readonly any aa_value, readonly any aa_check[])
+end prototypes
+
+global function boolean gf_iin (readonly any aa_value, readonly any aa_check[]);
+//╔═════════════════════════════════════════════════════════════════════════════════╗
+//║                                                                                 ║
+//║  ██████╗ ███████╗██████╗ ███████╗██╗   ██╗███████╗████████╗███████╗███╗   ███╗  ║
+//║  ██╔══██╗██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝██╔════╝╚══██╔══╝██╔════╝████╗ ████║  ║
+//║  ██████╔╝███████╗██████╔╝███████╗ ╚████╔╝ ███████╗   ██║   █████╗  ██╔████╔██║  ║
+//║  ██╔══██╗╚════██║██╔══██╗╚════██║  ╚██╔╝  ╚════██║   ██║   ██╔══╝  ██║╚██╔╝██║  ║
+//║  ██║  ██║███████║██║  ██║███████║   ██║   ███████║   ██║   ███████╗██║ ╚═╝ ██║  ║
+//║  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝  ║
+//║                                                                                 ║
+//╚═════════════════════════════════════════════════════════════════════════════════╝
+//
+//10-09-2026: gf_iin.srf
+//Autor: Ramón San Félix Ramón
+//Email: rsanfelix@rsrsystem.com
+//Web:   rsrsystem.blogspot.com
+//
+//  Appeon PowerBuilder Regional Conference Spain 2026
+//  Barcelona, 27 de octubre de 2026
+//  Ponencia: «Modernizando PowerBuilder con tecnologías web»
+/*
+Method				:  FN_IIN (Global Function) 
+Author				: Chris Pollach
+Scope  				: Public
+Extended			: No
+Level					: Base'
+
+Description			: Performs just like a DBMS's  IN command in SQL.
+Behaviour			: Allows the PB developer to pass in two arguments. The first argument is used to check its value 
+							with the value(s) passed INTO the 2nd argument. If there is a match, the function RETURNs a TRUE
+							otherwise, it RETURNs a FALSE (not match).
+							
+Note					:  Retuns a Boolean TRUE/FALSE
+
+Argument(s)			: 	any (ReadOnly)			-	aa_value
+							any (ReadOnly)			-	aa_check   (array)
+							
+Throws				: N/A
+
+RETURN Value		: new value
+
+-----------------------------------------------------------  CopyRight ------------------------------------------------------------------
+Copyright © 2015 by Software Tool & Die Inc, here in known as STD Inc.  All rights reserved.
+Any distribution of the STD Foundation Classes (STD_FC) for InfoMaker, Appeon,
+PowerBuilder® source code by other than STD, Inc. is prohibited.
+-----------------------------------------------------------  Revisions -------------------------------------------------------------------
+1.0 		Inital Version																		-	2015-05-28
+*/
+
+// Declarations
+
+Integer		li_loop																					// Work Var
+Integer		li_max																						// Work Var
+String			ls_type																					// Work Var
+Boolean		lb_rc = FALSE																			// Work Var
+ls_type		=	ClassName (aa_value)															// Get 1st arg's data type
+li_max			=	UpperBound (aa_check[])														// Get # of 2nd Arg's.
+
+FOR  li_loop		=	1  to  li_max																		// Loop thru data
+	IF  ClassName (aa_check[li_loop] )  <>  ls_type THEN								// Data type match?
+		Continue																								// NO=>Continue the loop!
+	ELSE
+		IF  aa_check[li_loop]	=	aa_value THEN													// YES=>Values Equal?
+			lb_rc	=	 TRUE																					// YES=>Set RC
+			EXIT																									// Exit the Loop!
+		END IF
+	END IF
+NEXT
+
+RETURN	lb_rc 																						// RETURN RC to caller
+
+end function
+

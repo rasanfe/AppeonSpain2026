@@ -1,0 +1,43 @@
+﻿global type gf_ventanas_abiertas from function_object
+end type
+
+forward prototypes
+global function integer gf_ventanas_abiertas (w_frame aw_main)
+end prototypes
+
+global function integer gf_ventanas_abiertas (w_frame aw_main);
+//╔═════════════════════════════════════════════════════════════════════════════════╗
+//║                                                                                 ║
+//║  ██████╗ ███████╗██████╗ ███████╗██╗   ██╗███████╗████████╗███████╗███╗   ███╗  ║
+//║  ██╔══██╗██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝██╔════╝╚══██╔══╝██╔════╝████╗ ████║  ║
+//║  ██████╔╝███████╗██████╔╝███████╗ ╚████╔╝ ███████╗   ██║   █████╗  ██╔████╔██║  ║
+//║  ██╔══██╗╚════██║██╔══██╗╚════██║  ╚██╔╝  ╚════██║   ██║   ██╔══╝  ██║╚██╔╝██║  ║
+//║  ██║  ██║███████║██║  ██║███████║   ██║   ███████║   ██║   ███████╗██║ ╚═╝ ██║  ║
+//║  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝  ║
+//║                                                                                 ║
+//╚═════════════════════════════════════════════════════════════════════════════════╝
+//
+//10-09-2026: gf_ventanas_abiertas.srf
+//Autor: Ramón San Félix Ramón
+//Email: rsanfelix@rsrsystem.com
+//Web:   rsrsystem.blogspot.com
+//
+//  Appeon PowerBuilder Regional Conference Spain 2026
+//  Barcelona, 27 de octubre de 2026
+//  Ponencia: «Modernizando PowerBuilder con tecnologías web»
+Integer li_Count
+window lw_Sheet
+
+/* devuelve número de 'hojas' abiertas (hoja es ventana abierta con opensheet )*/
+lw_Sheet = aw_main.GetFirstSheet ()
+
+if IsValid (lw_Sheet) then
+	Do
+		li_Count += 1
+		lw_Sheet = aw_main.GetNextSheet (lw_Sheet)
+	Loop While IsValid (lw_Sheet)
+end if
+
+return li_count
+end function
+

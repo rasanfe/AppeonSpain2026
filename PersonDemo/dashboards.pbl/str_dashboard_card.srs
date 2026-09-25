@@ -1,0 +1,14 @@
+﻿global type str_dashboard_card from structure
+	string		ls_titulo
+	string		ls_tamano
+	decimal		ld_valor_principal
+	string		ls_texto_principal
+	string		ls_unidad_principal
+	integer		li_decimales_principal
+	decimal		ld_valor_secundario
+	string		ls_texto_secundario
+	string		ls_unidad_secundario
+	integer		li_decimales_secundario
+	string		ls_id_click
+end type
+

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<RibbonBar BuiltinTheme="0" Font="FaceName:Tahoma; FontCharSet:ansi!; TextSize:12">
+  <RibbonItems>
+    <ApplicationButton Text="Programas" Enabled="true" Tag="m_file_master" Visible="true">
+      <ApplicationMenu>
+        <Master>
+          <Item Text="Configuración" PictureName="AccountSettingsBig!" Checked="false" Enabled="true" Shortcut="" Tag="m_setup" Type="0" Visible="true"  Clicked="ue_MasterMenuClicked" Selected="ue_MasterMenuSelected"/>
+          <Item Text="Dashboard" PictureName="AppBig!" Checked="false" Enabled="true" Shortcut="" Tag="m_dash" Type="0" Visible="true"  Clicked="ue_MasterMenuClicked" Selected="ue_MasterMenuSelected"/>
+          <Item Text="Nueva Factura" PictureName="AddBig!" Checked="false" Enabled="true" Shortcut="" Tag="m_factura_nueva" Type="0" Visible="true"  Clicked="ue_MasterMenuClicked" Selected="ue_MasterMenuSelected"/>
+          <Item Text="Listado Facturas" PictureName="OrdersBig!" Checked="false" Enabled="true" Shortcut="" Tag="m_facturas" Type="0" Visible="true"  Clicked="ue_MasterMenuClicked" Selected="ue_MasterMenuSelected"/>
+          <Item Text="Fichar" PictureName="HistoryBig!" Checked="false" Enabled="true" Shortcut="" Tag="m_fichar" Type="0" Visible="true"  Clicked="ue_MasterMenuClicked" Selected="ue_MasterMenuSelected"/>
+          <Item Text="Ayuda" PictureName="HelpBig!" Checked="false" Enabled="true" Tag="m_ayuda_master_menu" Type="0" Visible="true" Clicked="ue_MasterMenuClicked" Selected="ue_MasterMenuSelected">
+            <Item Text="Ventana Actual" PictureName="HelpBig!" Checked="false" Enabled="true" Tag="m_ventanaactual" Type="0" Visible="true" Clicked="ue_MasterMenuClicked" Selected="ue_MasterMenuSelected"/>
+            <Item Text="Acerca de..." PictureName="AboutBig!" Checked="false" Enabled="true" Tag="m_acerca" Type="0" Visible="true" Clicked="ue_MasterMenuClicked" Selected="ue_MasterMenuSelected"/>
+          </Item>
+          <Item Text="Salir" PictureName="ExitBig!" Checked="false" Enabled="true" Tag="m_salir" Type="0" Visible="true" Clicked="ue_MasterMenuClicked" Selected="ue_MasterMenuSelected"/>
+        </Master>
+      </ApplicationMenu>
+    </ApplicationButton>
+    <Categories>
+      <Category Text="Inicio" Enabled="true" Tag="m_home_category" Visible="true">
+        <Panel Text="Inicio" PictureName="BoardSmall!" Enabled="true" Tag="m_Inicio_panel" Visible="true">
+          <LargeButton Text="Configuración" Tag="m_setup" PictureName="AccountSettingsBig!" Enabled="true" Visible="true" Clicked="ue_LargeButtonClicked"/>
+          <LargeButton Text="Dashboard" Tag="m_dash" PictureName="AppBig!" Enabled="true" Visible="true" Clicked="ue_LargeButtonClicked"/>
+          <LargeButton Text="Nueva Factura" PictureName="AddBig!" Checked="false" Enabled="true" PowerTipText="Nueva Factura" PowerTipDescription="Dar de alta una factura" Tag="m_factura_nueva" Visible="true" Clicked="ue_LargeButtonClicked"/>
+          <LargeButton Text="Listado Facturas" PictureName="OrdersBig!" Checked="false" DefaultCommand="true" Enabled="true" PowerTipText="Listado Facturas" PowerTipDescription="" Tag="m_facturas" Visible="true" Clicked="ue_LargeButtonClicked"/>
+          <LargeButton Text="Fichar" PictureName="HistoryBig!" Checked="false" Enabled="true" PowerTipText="Fichar" PowerTipDescription="La web de fichar, dentro del ERP" Tag="m_fichar" Visible="true" Clicked="ue_LargeButtonClicked"/>
+        </Panel>
+      </Category>
+      <Category Text="Opciones" Enabled="true" Tag="m_opciones_category" Visible="true">
+        <Panel Text="Imprimir" PictureName="PrintSmall!" Enabled="true" Visible="true" Tag="m_imprimir_panel">
+          <LargeButton Text="Setup Impresora" Tag="m_setupimpresora" Enabled="true" Visible="true"  PictureName="PrintSetupBig!" Clicked="ue_LargeButtonClicked"/>
+          <LargeButton Text="Captura de Pantalla" Tag="m_imprimirpantalla" Enabled="true" Visible="true" PictureName="PreviewBig!" Clicked="ue_LargeButtonClicked"/>
+        </Panel>
+      </Category>
+      <Category Text="Utilidades" Enabled="true" Tag="m_utilidades_category" Visible="true">
+        <Panel Text="Apliciaciones" PictureName="CalculateSmall!" Enabled="true" Tag="m_aplicaciones_panel">
+          <LargeButton Text="Mapa de Caracteres" Tag="m_mapadecaracteres" Enabled="true" Visible="true" PictureName="SmallIconsBig!" Clicked="ue_LargeButtonClicked"/>
+          <LargeButton Text="Nota" Tag="m_notepad" Enabled="true" Visible="true" PictureName="ShowOnePageBig!" Clicked="ue_LargeButtonClicked"/>
+          <LargeButton Text="Calculadora" Tag="m_calculadora" Enabled="true" Visible="true" PictureName="CalculateBig!" Clicked="ue_LargeButtonClicked"/>
+          <LargeButton Text="Bloquear" Tag="m_bloquear" Enabled="true" Visible="true" PictureName="LockBig!" Clicked="ue_LargeButtonClicked"/>
+        </Panel>
+      </Category>
+      <Category Text="Ayuda" Enabled="true" Tag="m_ayuda_category" Visible="true">
+        <Panel Text="Ayuda" Enabled="true" Tag="ayuda">
+          <LargeButton Text="Ventana Actual" Enabled="true" Tag="m_ventanaactual" Visible="true" PictureName="HelpBig!" DefaultCommand="true" Checked="false" PowerTipText="" PowerTipDescription="" Clicked ="ue_LargebuttonClicked" Selected="ue_LargeButtonSelected"/>
+          <LargeButton Text="Acerca de..." Enabled="true" Tag="m_acerca" Visible="true" PictureName="AboutBig!" DefaultCommand="true" Checked="false" PowerTipText="" PowerTipDescription="" Clicked ="ue_LargebuttonClicked" Selected="ue_LargeButtonSelected"/>
+        </Panel>
+      </Category>
+    </Categories>
+    <TabButtons>
+      <TabButton Text="Minimize" PictureName="ArrowUpSmall!" Checked="false" DefaultCommand="true" Enabled="true" PowerTipText="Minimize" PowerTipDescription="Minimize or maximize RibbonBar." Shortcut="Ctrl+Shift+M" Tag="m_minimize" Visible="true"  Clicked="ue_TabButtonClicked" Selected="ue_TabButtonSelected"/>
+    </TabButtons>
+  </RibbonItems>
+</RibbonBar>

@@ -1,0 +1,11 @@
+﻿global type os_systemdatetime from structure
+	unsignedinteger		wyear
+	unsignedinteger		wmonth
+	unsignedinteger		wdayofweek
+	unsignedinteger		wday
+	unsignedinteger		whour
+	unsignedinteger		wminute
+	unsignedinteger		wsecond
+	unsignedinteger		wmillisecond
+end type
+

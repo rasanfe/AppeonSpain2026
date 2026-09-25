@@ -1,0 +1,562 @@
+/* ===========================================================================
+   Estilos de la demo — calcados de WebFichar (Control Horario).
+   Colores de la empresa 1: azul #0080FF, secundario naranja #FF6200.
+   Pensado para verse en un PROYECTOR y para caber en un móvil.
+   =========================================================================== */
+
+:root {
+  --azul: #0080ff;
+  --azul-oscuro: #0059b3;
+  --naranja: #ff6200;
+  --verde: #228b22;
+  --texto: #2c3e50;
+  --texto-suave: #666;
+  --borde: #ddd;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  color: var(--texto);
+  background: #fff;
+}
+
+/* ===========================================================================
+   LOGIN
+   =========================================================================== */
+
+.login-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 0 20px;
+  background: #fff;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .1), 0 25px 50px -12px rgba(0, 0, 0, .15);
+  border: 1px solid rgba(0, 0, 0, .12);
+}
+
+.login-header { text-align: center; margin-bottom: 30px; }
+.login-logo { width: 100%; max-width: 260px; height: auto; margin-bottom: 18px; }
+.login-title { font-size: 24px; margin: 0; font-weight: bold; }
+.login-trademark { font-size: 14px; }
+.login-subtitulo { margin: 4px 0 0; color: var(--texto-suave); font-size: 14px; }
+
+.login-field { margin-bottom: 20px; }
+
+.login-field label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--texto-suave);
+  font-size: .9rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.login-field-icon { width: 18px; height: 18px; }
+
+.login-field input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(0, 0, 0, .2);
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #4a5568;
+  background: #fff;
+  font-family: inherit;
+  transition: all .3s ease;
+}
+
+.login-field input:focus {
+  outline: none;
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(0, 128, 255, .15);
+}
+
+.login-field input:disabled { opacity: .6; cursor: not-allowed; }
+
+.login-password-wrapper { position: relative; display: flex; align-items: center; }
+.login-password-wrapper input { padding-right: 50px; }
+.login-password-wrapper input::-ms-reveal { display: none; }
+
+.login-toggle-password {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+}
+.login-toggle-password svg { width: 22px; height: 22px; }
+
+.login-remember {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.login-remember-left { display: flex; align-items: center; gap: 8px; }
+.login-remember input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+.login-remember label { font-size: 14px; font-weight: 500; cursor: pointer; user-select: none; }
+
+.login-submit {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 128, 255, .3);
+  transition: all .2s;
+}
+.login-submit:hover:not(:disabled) { filter: brightness(1.08); }
+.login-submit:disabled { opacity: .6; cursor: not-allowed; }
+
+.login-footer { text-align: center; margin-top: 20px; }
+.login-version { font-size: 11px; opacity: .6; margin-bottom: 5px; }
+.login-copyright { font-size: 12px; color: var(--texto); opacity: .75; }
+.login-evento { font-size: 11px; color: var(--texto-suave); opacity: .6; margin-top: 4px; }
+
+/* ===========================================================================
+   FICHAR
+   =========================================================================== */
+
+.fichar-page {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.fichar-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 10px;
+}
+
+.fichar-header-usuario { display: flex; flex-direction: column; line-height: 1.3; }
+.fichar-header-usuario strong { font-size: 18px; }
+.fichar-header-usuario span { font-size: 12px; opacity: .9; }
+
+.fichar-header-derecha { display: flex; align-items: center; gap: 10px; }
+
+/* Cerrar sesión: transparente con el icono blanco, como el de WebFichar. */
+.fichar-header-logout {
+  border: none;
+  background: transparent;
+  color: #fff;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity .2s, transform .2s;
+}
+
+.fichar-header-logout:hover { opacity: .8; }
+.fichar-header-logout:active { transform: scale(.95); }
+
+.fichar-header-origen {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: rgba(255, 255, 255, .22);
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Calendario + movimientos, en dos columnas */
+.main-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ---------- Calendario ---------- */
+.jb-cal {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.jb-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  padding: 10px 12px;
+}
+.jb-cal-mes { font-weight: 600; font-size: 15px; text-transform: capitalize; }
+.jb-cal-nav {
+  background: rgba(255, 255, 255, .2);
+  border: none;
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.jb-cal-nav:hover { background: rgba(255, 255, 255, .35); }
+
+.jb-cal-semana,
+.jb-cal-dias {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  padding: 0 8px;
+}
+.jb-cal-semana { padding-top: 8px; }
+
+.jb-cal-dia-semana {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--texto-suave);
+  padding: 4px 0;
+}
+
+.jb-cal-dias { padding-bottom: 8px; }
+.jb-cal-hueco { aspect-ratio: 1; }
+
+.jb-cal-dia {
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  background: none;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--texto);
+  cursor: pointer;
+  font-family: inherit;
+}
+.jb-cal-dia:hover { background: #eef4ff; }
+.jb-cal-finde { color: #b0b7bf; }
+.jb-cal-hoy { border-color: currentColor; font-weight: 700; }
+.jb-cal-sel { color: #fff !important; font-weight: 700; }
+
+/* ---------- Panel de movimientos ---------- */
+.movimientos-panel {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid var(--borde);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  overflow: hidden;
+}
+
+.movimientos-header {
+  color: #fff;
+  padding: 10px 15px;
+  margin: 0 0 10px;
+  border-radius: 6px;
+}
+.movimientos-header h3 { margin: 0 0 3px; font-size: 16px; font-weight: 600; }
+.fecha-seleccionada { font-size: 13px; opacity: .9; text-transform: capitalize; }
+
+.movimientos-table { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.movimientos-table table {
+  width: 100%;
+  border-collapse: collapse;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.movimientos-table thead { flex-shrink: 0; }
+.movimientos-table thead tr { display: flex; border-radius: 6px; overflow: hidden; }
+.movimientos-table tbody { flex: 1; overflow-y: auto; display: block; }
+.movimientos-table tbody tr { display: flex; }
+
+.movimientos-table th,
+.movimientos-table td { flex: 1; text-align: center; }
+
+.movimientos-table th:nth-child(1),
+.movimientos-table td:nth-child(1) { flex: 0 0 60px; }
+.movimientos-table th:nth-child(2),
+.movimientos-table td:nth-child(2) { flex: 2; white-space: nowrap; }
+
+.movimientos-table th { padding: 12px 10px; color: #fff; font-weight: bold; font-size: 14px; }
+.movimientos-table td { padding: 10px 8px; border-bottom: 1px solid #ecf0f1; font-size: 13px; }
+.movimientos-table .fecha-hora { font-weight: 600; font-variant-numeric: tabular-nums; }
+.movimientos-table .dispositivo { color: var(--texto-suave); }
+
+.badge-circular {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.movimientos-table tbody tr:has(.empty-state-cell) { display: block; }
+.empty-state-cell { display: block; width: 100%; padding: 0; border-bottom: none; }
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 16px;
+  min-height: 160px;
+}
+.empty-state-text { font-size: 15px; font-weight: 500; color: #555; margin: 0 0 4px; }
+.empty-state-hint { font-size: 13px; color: #999; margin: 0; }
+
+.movimientos-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 8px;
+  border-top: 1px solid;
+  margin-top: auto;
+}
+.movimientos-footer-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+  gap: 22px;
+}
+.footer-item { display: flex; flex-direction: column; align-items: center; min-width: 45px; }
+.footer-label { font-size: 11px; margin-bottom: 2px; }
+.footer-value { font-size: 16px; font-weight: bold; }
+.footer-historial { cursor: pointer; }
+.footer-historial:hover { opacity: .75; }
+
+/* ---------- Botones principales ---------- */
+.main-buttons { display: flex; gap: 15px; flex-shrink: 0; }
+
+.main-buttons button {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+}
+.main-buttons button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .2);
+}
+.main-buttons button:disabled { opacity: .45; cursor: not-allowed; transform: scale(.97); }
+.main-buttons button svg { flex-shrink: 0; display: block; }
+
+.main-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--texto-suave);
+  padding: 0 4px 4px;
+  flex-shrink: 0;
+}
+
+/* ===========================================================================
+   MESSAGEBOX  (el mismo de las aplicaciones de Ramón)
+   =========================================================================== */
+
+.msgbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10600;
+  padding: 20px;
+  animation: msgboxFadeIn .2s ease-out;
+}
+
+@keyframes msgboxFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.msgbox-container {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, .12);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .15), 0 25px 50px -12px rgba(0, 0, 0, .2);
+  min-width: 320px;
+  max-width: 480px;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: msgboxSlideIn .25s ease-out;
+}
+
+@keyframes msgboxSlideIn {
+  from { opacity: 0; transform: scale(.95) translateY(-10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.msgbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, .08);
+}
+.msgbox-header-left { display: flex; align-items: center; gap: 10px; }
+.msgbox-icon { width: 22px; height: 22px; display: flex; }
+.msgbox-icon-info { color: #60a5fa; }
+.msgbox-icon-success { color: var(--verde); }
+.msgbox-icon-warning { color: #fbbf24; }
+.msgbox-icon-error { color: #f87171; }
+.msgbox-icon-confirm { color: var(--azul); }
+.msgbox-title { font-size: 16px; font-weight: 600; margin: 0; line-height: 1.3; }
+
+.msgbox-body {
+  padding: 20px 24px;
+  font-size: 14px;
+  line-height: 1.6;
+  flex: 1;
+  overflow-y: auto;
+}
+.msgbox-body p { margin: 0; white-space: pre-line; }
+
+.msgbox-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(0, 0, 0, .08);
+  background: rgba(0, 0, 0, .02);
+}
+
+.msgbox-btn {
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all .15s ease;
+  min-width: 90px;
+  font-family: inherit;
+}
+.msgbox-btn:active { transform: scale(.97); }
+.msgbox-btn-primary {
+  background: linear-gradient(135deg, var(--azul) 0%, var(--azul-oscuro) 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 128, 255, .3);
+}
+.msgbox-btn-primary:hover { filter: brightness(1.1); }
+.msgbox-btn-secondary { background: var(--naranja); color: #fff; border: 1px solid var(--naranja); }
+.msgbox-btn-secondary:hover { filter: brightness(1.15); }
+
+.msgbox-info { border-top: 3px solid #60a5fa; }
+.msgbox-success { border-top: 3px solid var(--verde); }
+.msgbox-warning { border-top: 3px solid #fbbf24; }
+.msgbox-error { border-top: 3px solid #f87171; }
+.msgbox-confirm { border-top: 3px solid var(--azul); }
+
+/* Historial (reutiliza la caja del messagebox) */
+.msgbox-container.historial { max-width: 520px; }
+.historial-dia { padding: 8px 0; border-bottom: 1px solid #eee; }
+.historial-dia:last-child { border-bottom: none; }
+.historial-fecha { font-size: 13px; font-weight: 600; text-transform: capitalize; margin-bottom: 6px; }
+.historial-horas { display: flex; flex-wrap: wrap; gap: 6px; }
+.historial-hora {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid;
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+
+/* ===========================================================================
+   MÓVIL  (así se ve la PWA en el teléfono)
+   =========================================================================== */
+
+@media (max-width: 900px) {
+  .main-container { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+}
+
+@media (max-width: 768px) {
+  .fichar-page { padding: 8px 8px 0; }
+  .main-container { gap: 10px; }
+  .movimientos-panel { padding: 10px; border-radius: 10px; }
+  .movimientos-header { display: none; }
+  .movimientos-table th { padding: 8px 4px; font-size: 12px; }
+  .movimientos-table td { padding: 8px 4px; font-size: 12px; }
+  .badge-circular { width: 24px; height: 24px; font-size: 12px; }
+  .main-buttons { gap: 10px; }
+  .main-buttons button { padding: 14px; font-size: 15px; }
+  .login-card { padding: 28px 22px; }
+  .jb-cal-dia { font-size: 12px; }
+}
+
+/* ===========================================================================
+   TEMA OSCURO — cuando el ERP se está pintando con "Flat Design Dark".
+   El escritorio y la web embebida dejan de parecer dos aplicaciones distintas.
+   =========================================================================== */
+
+.fichar-page.tema-oscuro {
+  background: #1b2631;
+  color: #ecf0f1;
+}
+
+.fichar-page.tema-oscuro .jb-cal,
+.fichar-page.tema-oscuro .movimientos-panel {
+  background: #22303c;
+  border-color: #33475b;
+}
+
+.fichar-page.tema-oscuro .jb-cal-dia { color: #ecf0f1; }
+.fichar-page.tema-oscuro .jb-cal-dia:hover { background: #2c3e50; }
+.fichar-page.tema-oscuro .jb-cal-finde { color: #7f8c8d; }
+.fichar-page.tema-oscuro .jb-cal-dia-semana { color: #95a5a6; }
+
+.fichar-page.tema-oscuro .movimientos-table td { border-bottom-color: #33475b; }
+.fichar-page.tema-oscuro .movimientos-table .fecha-hora { color: #ecf0f1; }
+.fichar-page.tema-oscuro .movimientos-table .dispositivo { color: #95a5a6; }
+.fichar-page.tema-oscuro .empty-state-text { color: #bdc3c7; }
+.fichar-page.tema-oscuro .empty-state-hint { color: #7f8c8d; }
+.fichar-page.tema-oscuro .main-footer { color: #7f8c8d; }

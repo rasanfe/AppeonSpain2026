@@ -1,0 +1,58 @@
+# --- Secretos ---
+.env
+!.env.example
+
+# --- .NET ---
+bin/
+obj/
+.vs/
+*.user
+appsettings.Development.json
+
+# --- Node / React ---
+node_modules/
+WebFicharDemo/dist/
+*.local
+*.tsbuildinfo
+
+# --- Python ---
+__pycache__/
+
+# --- PowerBuilder (los .pbl son CARPETAS de fuentes: NO ignorar) ---
+PersonDemo/.pb/
+PersonDemo/build/
+PersonDemo/_BackupFiles/
+*.pbd
+*.usr.opt
+*.ini
+# Excepcion: sin el no arranca la ventana de fichar. Solo lleva el tema,
+# la URL local y el usuario/PIN de DEMO (publicos a proposito).
+!PersonDemo/Setting.ini
+# Ejecutable compilado y su config (ruta del runtime de esta maquina)
+*.exe
+PersonDemo/persondemo.xml
+*.log
+
+# --- Datos de la demo ---
+datos/*.bak
+datos/*.db
+datos/*.mdf
+datos/*.ldf
+# La configuracion del grid la graba PowerBuilder al cerrar la ventana
+PersonDemo/grid_config.json
+
+# --- Trabajo del ponente (no forma parte de la demo) ---
+.claude/
+iniciar_claude.bat
+*.lnk
+PRESENTACION/
+*.pptx
+
+# La web compilada cae dentro de la API (es build, no fuente)
+FicharDemoApi/wwwroot/
+
+# El HTML del fondo del MDI lo genera PowerBuilder al arrancar
+PersonDemo/imagenes/fondo.html
+
+# Plantilla de Appeon que venia con el proyecto (habla de AdventureWorks)
+FicharDemoApi/Readme.txt

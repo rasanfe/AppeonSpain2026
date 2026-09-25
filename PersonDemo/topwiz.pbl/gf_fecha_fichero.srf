@@ -1,0 +1,31 @@
+﻿global type gf_fecha_fichero from function_object
+end type
+
+forward prototypes
+global function datetime gf_fecha_fichero (string ls_fichero)
+end prototypes
+
+global function datetime gf_fecha_fichero (string ls_fichero);os_FindData lstr_FindData
+os_FindData lstr_FindDataTemp
+os_SystemDatetime lstr_SystemDateTime
+long handle
+datetime ldt_timestamp
+handle=FindFirstFile(ls_fichero, lstr_FindData)
+  
+IF handle=-1 THEN
+  setnull(ldt_timestamp)
+  RETURN ldt_timestamp  
+ELSE
+	 FileClose(handle)
+	 FileTimeToLocalFileTime(lstr_FindData.str_lastwritetime, lstr_FindDataTemp.str_lastwritetime)
+	 
+	 iF FileTimeToSystemTime (lstr_FindDataTemp.str_lastwritetime, lstr_SystemDateTime) THEN
+			ldt_timestamp = datetime(date(lstr_SystemDateTime.wYear, & 
+					lstr_SystemDateTime.wMonth, lstr_SystemDateTime.wDay), & 
+					time(lstr_SystemDateTime.wHour, &
+					lstr_SystemDateTime.wMinute, 0))
+			RETURN ldt_timestamp
+	  END IF
+END IF
+end function
+
