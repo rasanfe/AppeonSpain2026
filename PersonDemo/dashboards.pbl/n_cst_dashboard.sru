@@ -47,6 +47,7 @@ public function string of_get_html ()
 public function string of_long_to_htmlcolor (long al_color)
 public subroutine of_set_theme_colors ()
 public function string of_long_to_hex (long al_number, integer ai_digit)
+protected function string of_leer_fichero_texto (string as_fichero)
 end prototypes
 
 protected function string of_generar_dashboard_html (str_dashboard_config astr_config);
@@ -69,7 +70,7 @@ protected function string of_generar_dashboard_html (str_dashboard_config astr_c
 //  Appeon PowerBuilder Regional Conference Spain 2026
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
-string ls_html, ls_grid_css, ls_containers
+string ls_html, ls_grid_css, ls_containers, ls_chartjs
 integer li_i
 
 // Establecer colores según el tema
@@ -89,7 +90,15 @@ ls_html += "<head>" + "~r~n"
 ls_html += "  <meta charset=" + char(34) + "UTF-8" + char(34) + ">" + "~r~n"
 ls_html += "  <meta name=" + char(34) + "viewport" + char(34) + " content=" + char(34) + "width=device-width, initial-scale=1.0" + char(34) + ">" + "~r~n"
 ls_html += "  <title>Dashboard Simple</title>" + "~r~n"
-ls_html += "  <script src=" + char(34) + "https://cdn.jsdelivr.net/npm/chart.js" + char(34) + "></script>" + "~r~n"
+// Chart.js viaja con la aplicación (js\chart.umd.min.js): la charla se da sin internet.
+// Va INCRUSTADO en el HTML: con NavigateToString el documento no tiene carpeta y un
+// <script src> relativo no cargaría. Si faltara el fichero, se tira del CDN.
+ls_chartjs = of_leer_fichero_texto(gs_dir + "\js\chart.umd.min.js")
+IF Len(ls_chartjs) > 0 THEN
+	ls_html += "  <script>" + "~r~n" + ls_chartjs + "~r~n" + "  </script>" + "~r~n"
+ELSE
+	ls_html += "  <script src=" + char(34) + "https://cdn.jsdelivr.net/npm/chart.js" + char(34) + "></script>" + "~r~n"
+END IF
 ls_html += "  <script>" + "~r~n"
 ls_html += "    function openPB(tipo) { " + "~r~n"
 ls_html += "      if(window.webBrowser && typeof window.webBrowser.ue_open===" + char(39) + "function" + char(39) + "){ " + "~r~n"
@@ -279,7 +288,9 @@ next
 ls_dataset1 = "{ label: " + char(39) + astr_chart.ls_label_serie1 + char(39) + ", data: ["
 for li_i = 1 to upperbound(astr_chart.ls_valores)
 	if li_i > 1 then ls_dataset1 += ","
-	ls_dataset1 += astr_chart.ls_valores[li_i]
+	// Punto decimal SIEMPRE: con la coma de la configuración regional, "43500,25"
+	// dentro del array de JavaScript son DOS valores y todo el gráfico se corre.
+	ls_dataset1 += gf_replaceall(astr_chart.ls_valores[li_i], ",", ".")
 next
 ls_dataset1 += "], backgroundColor: " + char(39) + is_color_primario + char(39) + ", borderColor: " + char(39) + is_color_primario + char(39) + ", borderWidth: 1 }"
 
@@ -288,7 +299,7 @@ if upperbound(astr_chart.ls_valores_serie2) > 0 then
 	ls_dataset2 = "{ label: " + char(39) + astr_chart.ls_label_serie2 + char(39) + ", data: ["
 	for li_i = 1 to upperbound(astr_chart.ls_valores_serie2)
 		if li_i > 1 then ls_dataset2 += ","
-		ls_dataset2 += astr_chart.ls_valores_serie2[li_i]
+		ls_dataset2 += gf_replaceall(astr_chart.ls_valores_serie2[li_i], ",", ".")
 	next
 	ls_dataset2 += "], backgroundColor: " + char(39) + is_color_secundario + char(39) + ", borderColor: " + char(39) + is_color_secundario + char(39) + ", borderWidth: 1 }"
 	
@@ -594,6 +605,45 @@ IF ai_digit > 0 THEN
 else
 	RETURN ""
 END IF
+end function
+
+protected function string of_leer_fichero_texto (string as_fichero);
+//╔═════════════════════════════════════════════════════════════════════════════════╗
+//║                                                                                 ║
+//║  ██████╗ ███████╗██████╗ ███████╗██╗   ██╗███████╗████████╗███████╗███╗   ███╗  ║
+//║  ██╔══██╗██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝██╔════╝╚══██╔══╝██╔════╝████╗ ████║  ║
+//║  ██████╔╝███████╗██████╔╝███████╗ ╚████╔╝ ███████╗   ██║   █████╗  ██╔████╔██║  ║
+//║  ██╔══██╗╚════██║██╔══██╗╚════██║  ╚██╔╝  ╚════██║   ██║   ██╔══╝  ██║╚██╔╝██║  ║
+//║  ██║  ██║███████║██║  ██║███████║   ██║   ███████║   ██║   ███████╗██║ ╚═╝ ██║  ║
+//║  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝  ║
+//║                                                                                 ║
+//╚═════════════════════════════════════════════════════════════════════════════════╝
+//
+//26-09-2026: n_cst_dashboard.sru · of_leer_fichero_texto
+//Autor: Ramón San Félix Ramón
+//Email: rsanfelix@rsrsystem.com
+//Web:   rsrsystem.blogspot.com
+//
+//  Appeon PowerBuilder Regional Conference Spain 2026
+//  Barcelona, 27 de octubre de 2026
+//  Ponencia: «Modernizando PowerBuilder con tecnologías web»
+// Devuelve el contenido entero de un fichero de texto, o "" si no se puede leer.
+// FileReadEx en StreamMode! lee el fichero de una vez (FileRead corta a 32.765).
+Integer li_fichero
+Long ll_leidos
+String ls_texto
+
+IF NOT FileExists(as_fichero) THEN Return ""
+
+li_fichero = FileOpen(as_fichero, StreamMode!, Read!, Shared!)
+IF li_fichero < 1 THEN Return ""
+
+ll_leidos = FileReadEx(li_fichero, ls_texto)
+FileClose(li_fichero)
+
+IF ll_leidos < 1 OR IsNull(ls_texto) THEN Return ""
+
+Return ls_texto
 end function
 
 on n_cst_dashboard.create

@@ -34,6 +34,7 @@ end variables
 forward prototypes
 public subroutine wf_leer_configuracion ()
 public function boolean wf_entrar ()
+public subroutine wf_abrir ()
 end prototypes
 
 public subroutine wf_leer_configuracion ();
@@ -193,6 +194,32 @@ wb_1.Navigate(ls_url)
 Return True
 end function
 
+public subroutine wf_abrir ();
+//╔═════════════════════════════════════════════════════════════════════════════════╗
+//║                                                                                 ║
+//║  ██████╗ ███████╗██████╗ ███████╗██╗   ██╗███████╗████████╗███████╗███╗   ███╗  ║
+//║  ██╔══██╗██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝██╔════╝╚══██╔══╝██╔════╝████╗ ████║  ║
+//║  ██████╔╝███████╗██████╔╝███████╗ ╚████╔╝ ███████╗   ██║   █████╗  ██╔████╔██║  ║
+//║  ██╔══██╗╚════██║██╔══██╗╚════██║  ╚██╔╝  ╚════██║   ██║   ██╔══╝  ██║╚██╔╝██║  ║
+//║  ██║  ██║███████║██║  ██║███████║   ██║   ███████║   ██║   ███████╗██║ ╚═╝ ██║  ║
+//║  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝  ║
+//║                                                                                 ║
+//╚═════════════════════════════════════════════════════════════════════════════════╝
+//
+//26-09-2026: w_fichar_html.srw · wf_abrir
+//Autor: Ramón San Félix Ramón
+//Email: rsanfelix@rsrsystem.com
+//Web:   rsrsystem.blogspot.com
+//
+//  Appeon PowerBuilder Regional Conference Spain 2026
+//  Barcelona, 27 de octubre de 2026
+//  Ponencia: «Modernizando PowerBuilder con tecnologías web»
+// Si no se ha podido entrar (API parada, PIN mal...), wf_entrar ya ha avisado:
+// tras el Aceptar no queda nada que hacer aqui, asi que la ventana se cierra
+// en vez de quedarse abierta y en blanco.
+IF NOT wf_entrar() THEN Close(This)
+end subroutine
+
 on w_fichar_html.create
 this.wb_1=create wb_1
 this.Control[]={this.wb_1}
@@ -223,7 +250,7 @@ event open;
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 
-This.Post wf_entrar()
+This.Post wf_abrir()
 end event
 
 event resize;
