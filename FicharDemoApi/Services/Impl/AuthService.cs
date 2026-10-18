@@ -18,29 +18,27 @@
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 
+using FicharApi.Config;
+using FicharApi.Data;
 using FicharApi.Models;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace FicharApi.Services.Impl
 {
     public class AuthService : IAuthService
     {
-        private readonly DefaultDataContext _dataContext;
-        private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpAccessor;
-        public AuthService(DefaultDataContext dataContext, IConfiguration configuration, IHttpContextAccessor httpAccessor)
+        private readonly JsonDatabase _db;
+
+        public AuthService(JsonDatabase db)
         {
-            _dataContext = dataContext;
-            _configuration = configuration;
-            _httpAccessor = httpAccessor;
+            _db = db;
         }
-        
-        public Usuarios Login(AuthUser AuthRequest)
+
+        public async Task<Usuarios> LoginAsync(AuthUser AuthRequest, CancellationToken cancellationToken)
         {
-            Usuarios usuario = _dataContext.SqlModelMapper.Load<Usuarios>(AuthRequest.Username, AuthRequest.Password).FirstOrDefault();
+            var usuarios = await _db.LeerAsync<Usuarios>(DemoConstants.TablaUsuarios, cancellationToken);
+
+            Usuarios? usuario = usuarios.FirstOrDefault(u =>
+                Texto.Igual(u.Usuario, AuthRequest.Username) && Texto.Igual(u.Pin, AuthRequest.Password));
             if (usuario != null)
             {
                 usuario.IsValid = true;

@@ -9,7 +9,7 @@
 //║                                                                                 ║
 //╚═════════════════════════════════════════════════════════════════════════════════╝
 //
-//10-09-2026: EmpleadosService.cs
+//17-10-2026: Nomregistro.cs
 //Autor: Ramón San Félix Ramón
 //Email: rsanfelix@rsrsystem.com
 //Web:   rsrsystem.blogspot.com
@@ -18,67 +18,43 @@
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SnapObjects.Data;
+using System.Text.Json.Serialization;
 
-namespace FicharApi.Services.Impl
+namespace FicharApi.Models
 {
-    public class EmpleadosService : IEmpleadosService
+    /// <summary>
+    /// Una fila de Database/nomregistro.json: un fichaje, con las columnas de la
+    /// tabla del ERP. Entrada y salida NO se guardan: se deducen del orden
+    /// dentro del dia, igual que en el ERP.
+    /// </summary>
+    public class Nomregistro
     {
-        private readonly DataContext _dataContext;
-        
-        public EmpleadosService(DefaultDataContext dataContext)
-        {
-            _dataContext = dataContext;
-        }
-        public async Task<string> CompuestoEmpleadoAsync(string empresa, string empleado, CancellationToken cancellationToken)
-        {
-            string nombre = "";
-            string apellidos = "";
-            string compuesto = "";
-            
-            
-            var sql = @"SELECT nombre,
-                        apellidos
-                    FROM nomgenter
-                    WHERE nomgenter.empresa=@empresa
-                    AND nomgenter.codigo=@empleado";
-            
-            var list = await _dataContext.SqlExecutor.SelectAsync<DynamicModel>(sql, empresa, empleado, cancellationToken);
-            
-            int rowCount = list.Count;
-            
-            if (rowCount > 1)
-            {
-                throw new Exception("La consulta SQL ha devuelto más de un resultado.");
-            }
-            else if (rowCount == 0)
-            {
-                throw new Exception("La consulta SQL no ha devuelto ningún resultado.");
-            }
+        [JsonPropertyName("No")]
+        public int No { get; set; }
 
+        [JsonPropertyName("Mchn")]
+        public int? Mchn { get; set; }
 
-            nombre = list[0].GetValue<string>("nombre");
-            apellidos = list[0].GetValue<string>("apellidos");
-            
-            if ((nombre == null) || (nombre.Trim() == ""))
-            {
-                nombre = "";
-            }
+        [JsonPropertyName("EnNo")]
+        public int? EnNo { get; set; }
 
-            if ((apellidos == null) || (apellidos.Trim() == ""))
-            {
-                apellidos = "";
-            }
+        [JsonPropertyName("Name")]
+        public string? Name { get; set; }
 
-            compuesto = nombre + " " + apellidos;
-            
-            return compuesto;
-            
-        }
-        
+        [JsonPropertyName("Mode")]
+        public int? Mode { get; set; }
+
+        /// <summary>La empresa, en numero.</summary>
+        [JsonPropertyName("IOMd")]
+        public int? IOMd { get; set; }
+
+        [JsonPropertyName("DateTime")]
+        public DateTime? Fecha { get; set; }
+
+        [JsonPropertyName("latitud")]
+        public double? Latitud { get; set; }
+
+        [JsonPropertyName("longitud")]
+        public double? Longitud { get; set; }
     }
 }

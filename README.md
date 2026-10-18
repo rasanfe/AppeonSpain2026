@@ -15,10 +15,19 @@ React viva dentro del ERP, comparta su sesión y le hable de vuelta.
 
 | Carpeta | Qué es |
 |---|---|
-| `PersonDemo/` | La aplicación **PowerBuilder 2025**: fondo web del MDI, dashboard con Chart.js, AG Grid comiendo de un DataWindow, mantenimiento sobre JSON y la ventana de fichar con la web embebida. |
-| `FicharDemoApi/` | API **.NET 10** con el ORM DataWindow de Appeon (`DWNet.Data` / `SnapObjects.Data` 5.1) y **JWT**. Sirve también la web: la demo entera es **un solo proceso**. |
+| `PersonDemo/` | La aplicación **PowerBuilder 2025**: fondo web del MDI, dashboard con Chart.js, AG Grid comiendo de un DataWindow, mantenimiento sobre JSON y la ventana de fichar con la web embebida. Sus datos (las facturas) viven en `PersonDemo/Database/`. |
+| `FicharDemoApi/` | API **.NET 10** con **JWT**. Sirve también la web: la demo entera es **un solo proceso**. Sus datos, un JSON por tabla, viven en `FicharDemoApi/Database/`. |
 | `WebFicharDemo/` | App **React 19 + Vite + TypeScript**, instalable como **PWA** (el móvil sin APK). |
-| `datos/` | Scripts de la base de datos de la demo. |
+
+**No hace falta base de datos.** Las dos aplicaciones guardan sus datos en ficheros JSON,
+cada una en su carpeta `Database/`. Los tres clientes de la app de fichar (PowerBuilder,
+navegador y móvil) escriben a la vez, pero todos pasan por la API, que es quien toca los
+ficheros. En producción esto sería SQL Server; aquí, JSON para que la demo arranque en
+cualquier máquina y sin red.
+
+Los fichajes de 2026 son inventados y llegan **hasta el día de la charla**, que solo
+tiene la entrada de la mañana. La API no devuelve los posteriores a la hora actual, así
+que cada día de ensayo se ve como una jornada real hasta ese momento.
 
 ## 🌉 El puente PowerBuilder → web
 
@@ -31,8 +40,9 @@ Y de vuelta, la web llama a PowerBuilder con `window.webBrowser.ue_close_window(
 `window.webBrowser.ue_gf_msgbox(...)`, registrados con `RegisterEvent`.
 
 Con `embedded=true` la **misma web, un solo build,** se comporta distinto solo porque la
-abre PowerBuilder: cambia la insignia, "Historial" pasa a ser "Cerrar ventana" y los
-avisos los pinta el escritorio.
+abre PowerBuilder: cambia la insignia, "Historial" pasa a ser "Cerrar" (y el historial,
+un icono en el pie) y el aviso de que se ha fichado lo pinta el escritorio. Fuera del
+ERP no hay aviso: el fichaje aparece en la tabla.
 
 > ⚠️ **Es una demo.** El JWT es de manual y el usuario y el PIN viajan en claro sobre
 > `localhost`. No es el mecanismo de seguridad de ninguna aplicación real.
@@ -42,26 +52,19 @@ avisos los pinta el escritorio.
 - **PowerBuilder 2025** (o su runtime, para el ejecutable) con **WebView2**.
 - **.NET 10 SDK**.
 - **Node.js 20+**.
-- **SQL Server** con la base `FicharDemo` (el ejemplo de PowerBuilder va por JSON: solo
-  la app de fichar necesita base de datos).
-- Python 3, solo para `datos/comprobar_bd_demo.py`.
+- Python 3, solo para la prueba de humo (`scripts/probar_api.py`).
 
 Todo funciona **sin internet**: no hay ni una dependencia de CDN en tiempo de ejecución.
 
 ## 🚀 Puesta en marcha
 
-1. Copia `.env.example` a `.env` y rellena la conexión a SQL Server y una clave JWT.
-2. En tu SQL Server, con un usuario administrador y en este orden:
-   - `datos/crear_bd_fichardemo.sql`: crea la base `FicharDemo`, sus tablas, el
-     procedimiento `fichar` y el usuario del ponente (`RASANFE` / `0000`).
-   - `datos/crear_usuario_fichardemo.sql`: el login que usa la API.
-   - `datos/empleados_demo.sql`: los usuarios `APPEON` (`1111`) y `PUBLICO` (`2222`).
-   - `python datos/comprobar_bd_demo.py`: comprueba que está todo.
-3. `WebFicharDemo`: `npm install`.
-4. **`arrancar_demo.bat`**: compila la web dentro de la API, la arranca, espera a que
+1. Copia `.env.example` a `.env` y pon una clave JWT.
+2. `WebFicharDemo`: `npm install`.
+3. **`arrancar_demo.bat`**: compila la web dentro de la API, la arranca, espera a que
    responda y abre el navegador. Muestra también la URL para el móvil y la de Swagger.
-5. Abre `PersonDemo/persondemo.pbsln` en PowerBuilder y ejecuta. La ventana de fichar
-   lee su configuración de `PersonDemo/Setting.ini` (sección `[FicharDemo]`).
+4. Abre `PersonDemo/persondemo.pbsln` en PowerBuilder y ejecuta. Entra con un usuario
+   del ERP (`RASANFE` / `APPEON`). La URL de la API está en `PersonDemo/Setting.ini`
+   (sección `[FicharDemo]`).
 
 Otros lanzadores:
 
@@ -69,9 +72,31 @@ Otros lanzadores:
 |---|---|
 | `abrir_movil.bat` | La web como se ve en un teléfono (Chrome en modo app, 430×880, *user-agent* Android). |
 | `arrancar_desarrollo.bat` | API + Vite con recarga en caliente (puerto 5173). |
-| `restaurar_datos_demo.bat` | Deja `data2026.json` como estaba antes de trastear. |
-| `python scripts/probar_api.py` | Prueba de punta a punta con la API levantada: login → ticket → canje → el mismo ticket otra vez (401) → fichajes. |
+| `restaurar_datos_demo.bat` | Deja las facturas, los usuarios del ERP y los fichajes como estaban antes de trastear (vale con la API arrancada). |
+| `python scripts/probar_api.py` | Prueba de punta a punta con la API levantada: login → ticket → canje → el mismo ticket otra vez (401) → fichajes → fichar (y borra el fichaje de prueba). |
 | `python scripts/fuente_editor_pb.py` | Pone **Consolas** en el editor de PowerBuilder, que viene con Tahoma (proporcional). Con el IDE cerrado; `--aplicar` para escribir. |
+
+## 👥 Dos sistemas de usuarios
+
+El ERP y la app de fichar **no comparten usuarios**, como pasa en cualquier cliente real.
+El ERP tiene los suyos (`PersonDemo/Database/usuarios.json`, con las claves **cifradas
+con AES**) y cada uno lleva asignado el usuario y el PIN con los que entra en la app
+móvil. Es esa equivalencia la que usa PowerBuilder para abrir la web sin pedir nada.
+Se ve y se cambia en **Usuarios**, en el ribbon.
+
+| Usuario del ERP | Contraseña | → Usuario móvil | PIN |
+|---|---|---|---|
+| `RASANFE` | `APPEON` | `RAMON` | `0000` |
+| `INVITADO` | `INVITADO` | `PUBLICO` | `2222` |
+| — | — | `APPEON` | `1111` (solo móvil) |
+
+Públicos a propósito: no hay un solo dato real, y la clave AES de la demo está en el
+código (`n_cst_cifrado`) para que quien clone el repositorio pueda entrar.
+
+La API comprueba que cada uno solo **consulta, ficha o borra sus propios fichajes**:
+el empleado sale del token, no de lo que mande el cliente. Y borrar, como en la app
+de producción, solo en los **5 minutos** siguientes a fichar (la fila lleva un reloj
+mientras se puede).
 
 ## 📚 Antes de esta charla
 

@@ -1,0 +1,346 @@
+/* HistorialModal.css - calco de FichajesHistoryModal.css de WebFichar (PC y movil).
+   Las clases del pie van dentro de .history-modal: en la demo, .footer-item y
+   compañía ya las usa el pie de la tabla de movimientos. */
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes history-girar {
+  to { transform: rotate(360deg); }
+}
+
+.history-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+/* Modal centrado en el viewport; en movil, a pantalla completa (abajo). */
+.history-modal {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  overflow: hidden;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 1100px);
+  height: min(88vh, 760px);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* ============ HEADER ============ */
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  color: #fff;
+  flex-shrink: 0;
+  border-radius: 12px 12px 0 0;
+  gap: 12px;
+}
+
+.history-header-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.history-subtitle-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+
+.history-subtitle {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.history-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  flex-shrink: 0;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.history-close-btn:hover { opacity: 1; }
+
+/* ============ CONTENT ============ */
+.history-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #ffffff;
+  min-height: 0;
+}
+
+.history-loading,
+.history-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #888;
+  gap: 16px;
+  padding: 60px 30px;
+  text-align: center;
+}
+
+.history-empty p { margin: 0; font-size: 16px; }
+
+/* El LoadingSpinner de WebFichar, en CSS: un aro que gira */
+.history-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e0e0e0;
+  border-radius: 50%;
+  animation: history-girar 0.8s linear infinite;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ============ DAY CARD ============ */
+.day-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 16px;
+  background: #f5f5f5;
+  border-left: 4px solid;
+  cursor: pointer;
+  transition: background 0.2s;
+  user-select: none;
+  min-height: 70px;
+}
+
+.day-header-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 12px;
+  min-width: 0;
+}
+
+.day-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.day-date {
+  font-size: 16px;
+  font-weight: 600;
+  color: #888888;
+}
+
+.day-hours {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.day-header-right {
+  text-align: right;
+  flex-shrink: 0;
+  padding-left: 16px;
+}
+
+.fichajes-count {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ============ DAY CONTENT (desplegado) ============ */
+.day-content {
+  padding: 15px;
+  background: #fff;
+}
+
+.fichaje-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #ecf0f1;
+  gap: 12px;
+}
+
+.fichaje-row:last-child { border-bottom: none; }
+
+.fichaje-time-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  width: 100px;
+}
+
+.tipo-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.fichaje-time {
+  font-size: 15px;
+  font-weight: 700;
+  color: #888888;
+}
+
+.fichaje-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.tipo-label {
+  font-size: 14px;
+  color: #888888;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+/* ============ FOOTER ============ */
+.history-footer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 20px;
+  background: #fff;
+  border-top: 2px solid;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+  gap: 8px;
+  min-height: 60px;
+  max-height: 60px;
+}
+
+.history-modal .footer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 12px;
+  flex: 1;
+}
+
+.history-modal .footer-label {
+  font-size: 10px;
+  color: #888;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+
+.history-modal .footer-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.history-modal .footer-divider {
+  width: 1px;
+  height: 30px;
+  background: #e0e0e0;
+}
+
+/* ============ MOVIL ============ */
+@media (max-width: 600px) {
+  .history-modal {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    transform: none;
+    border-radius: 0;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .history-header { padding: 14px 16px; border-radius: 0; }
+  .history-title { font-size: 17px; }
+  .history-content { padding: 10px; }
+  .history-list { gap: 10px; }
+  .day-header { padding: 12px; min-height: 55px; }
+  .day-header-left { gap: 10px; }
+  .day-date { font-size: 14px; }
+  .day-hours { font-size: 12px; }
+  .fichajes-count { font-size: 12px; }
+  .day-content { padding: 10px; }
+  .fichaje-row { padding: 10px 0; gap: 10px; }
+  .fichaje-time-container { width: 80px; gap: 8px; }
+  .tipo-badge { width: 22px; height: 22px; font-size: 10px; }
+  .fichaje-time { font-size: 14px; }
+  .tipo-label { font-size: 12px; }
+  .history-footer { padding: 10px; gap: 4px; min-height: 50px; max-height: 50px; }
+  .history-modal .footer-item { padding: 0 6px; }
+  .history-modal .footer-label { font-size: 9px; }
+  .history-modal .footer-value { font-size: 15px; }
+  .history-modal .footer-divider { height: 24px; }
+}
+
+/* ============ SCROLLBAR ============ */
+.history-content::-webkit-scrollbar { width: 6px; }
+.history-content::-webkit-scrollbar-track { background: #f0f0f0; }
+.history-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+.history-content::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+/* ============ TEMA OSCURO DEL ERP (Flat Design Dark) ============ */
+.tema-oscuro .history-modal,
+.tema-oscuro .history-content,
+.tema-oscuro .day-content,
+.tema-oscuro .history-footer { background: #1c2833; }
+.tema-oscuro .day-card { background: #22303c; }
+.tema-oscuro .day-header { background: #22303c; }
+.tema-oscuro .day-header:hover { background: #2c3e50; }
+.tema-oscuro .day-date,
+.tema-oscuro .fichaje-time,
+.tema-oscuro .tipo-label { color: #bdc3c7; }
+.tema-oscuro .fichaje-row { border-bottom-color: #33475b; }
+.tema-oscuro .history-modal .footer-divider { background: #33475b; }

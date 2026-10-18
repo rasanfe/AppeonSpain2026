@@ -9,7 +9,7 @@
 //║                                                                                 ║
 //╚═════════════════════════════════════════════════════════════════════════════════╝
 //
-//10-09-2026: IUsuariosService.cs
+//17-10-2026: Fichaje.cs
 //Autor: Ramón San Félix Ramón
 //Email: rsanfelix@rsrsystem.com
 //Web:   rsrsystem.blogspot.com
@@ -18,23 +18,47 @@
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SnapObjects.Data;
+using System.Text.Json.Serialization;
 
-namespace FicharApi.Services
+namespace FicharApi.Models
 {
-    public interface IUsuariosService
+    /// <summary>
+    /// Un fichaje tal y como lo recibe la web: el mismo contrato que daba el
+    /// DataWindow de 2024, en PascalCase (por eso los nombres van fijados) y
+    /// sin el GPS, que se graba pero no sale de la API.
+    /// </summary>
+    public class Fichaje
     {
-        Task<string> EmpresaUsuarioAsync(string usuario, CancellationToken cancellationToken);
-        
-        Task<string> GrupoUsuarioAsync(string usuario, CancellationToken cancellationToken);
-        
-        Task<string> EmpleadoUsuarioAsync(string usuario, CancellationToken cancellationToken);
-        
-        Task<string> UsuarioEmpleadoAsync(string empresa, string empleado, CancellationToken cancellationToken);
+        [JsonPropertyName("No")]
+        public int No { get; set; }
 
+        [JsonPropertyName("Mchn")]
+        public int? Mchn { get; set; }
+
+        [JsonPropertyName("Enno")]
+        public int? Enno { get; set; }
+
+        [JsonPropertyName("Name")]
+        public string? Name { get; set; }
+
+        [JsonPropertyName("Mode")]
+        public int? Mode { get; set; }
+
+        [JsonPropertyName("Iomd")]
+        public int? Iomd { get; set; }
+
+        [JsonPropertyName("Datetime")]
+        public DateTime? Datetime { get; set; }
+
+        public static Fichaje Desde(Nomregistro fila) => new()
+        {
+            No = fila.No,
+            Mchn = fila.Mchn,
+            Enno = fila.EnNo,
+            Name = fila.Name,
+            Mode = fila.Mode,
+            Iomd = fila.IOMd,
+            Datetime = fila.Fecha
+        };
     }
 }

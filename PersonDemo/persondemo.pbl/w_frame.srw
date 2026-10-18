@@ -367,6 +367,9 @@ CHOOSE CASE as_menu_name
 		OpenSheetWithParm(w_mant_facturas, "NUEVA", this, 0, Layered!)
 	CASE "m_fichar"
 		Open(w_fichar_html)   // response!: no es un sheet del MDI
+	CASE "m_usuarios"
+		// Usuarios del ERP y su equivalencia con la app movil
+		OpenSheet(w_mant_usuarios, this, 0, Layered!)
 	CASE "m_salir"
 		Close(this)
 		Return
@@ -528,7 +531,8 @@ Datetime ldt_hora
 ldt_hora=datetime(today(), now())
 ls_hora = String(ldt_hora, "dd/mm/yyyy  hh:mm:ss")
 
-This.SetMicroHelp (ls_hora + "  ")
+// Quien ha entrado en el ERP: el usuario del login, no el de la app movil
+This.SetMicroHelp ("Usuario: " + gs_usuario + "    " + ls_hora + "  ")
 
 
 end event

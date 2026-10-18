@@ -105,7 +105,7 @@ export async function canjearTicket(ticket: string): Promise<Sesion> {
 
 // --- Fichajes --------------------------------------------------------------
 
-/** Tal cual lo devuelve el DataWindow de la API (PascalCase). */
+/** Tal cual lo devuelve la API, en PascalCase: el contrato del DataWindow de 2024. */
 export interface Fichaje {
   No: number
   Mchn: number | null
@@ -138,30 +138,27 @@ export async function listarFichajes(
   return data
 }
 
-/** Para el historial: varios dias de una vez, en paralelo. */
-export async function listarUltimosDias(
+/** Para el historial: los fichajes de un rango de días, de una sola vez. */
+export async function listarHistorico(
   empresa: string,
   empleado: string,
-  dias: number,
-): Promise<{ fecha: Date; fichajes: Fichaje[] }[]> {
-  const fechas: Date[] = []
-  for (let i = 0; i < dias; i++) {
-    const f = new Date()
-    f.setDate(f.getDate() - i)
-    fechas.push(f)
-  }
-  const resultado = await Promise.all(
-    fechas.map(async (fecha) => ({
-      fecha,
-      fichajes: await listarFichajes(empresa, empleado, fecha).catch(() => []),
-    })),
+  desde: Date,
+  hasta: Date,
+): Promise<Fichaje[]> {
+  const { data } = await api.get<Fichaje[]>(
+    `/Nomregistro/RetrieveHistorico/${empresa}/${empleado}/${fechaISO(desde)}/${fechaISO(hasta)}`,
   )
-  return resultado.filter((d) => d.fichajes.length > 0)
+  return data
 }
 
 export async function fichar(empresa: string, empleado: string): Promise<void> {
   const { latitud, longitud } = await coordenadas()
   await api.post('/Nomregistro/Fichar', { empresa, empleado, latitud, longitud })
+}
+
+/** Borra un fichaje propio. La API solo lo deja en los minutos siguientes a fichar. */
+export async function borrarFichaje(id: number): Promise<void> {
+  await api.post('/Nomregistro/BorrarFichaje', { id })
 }
 
 /** El GPS es un extra: si el navegador lo niega o tarda, se ficha igual. */

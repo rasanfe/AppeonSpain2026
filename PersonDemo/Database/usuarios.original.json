@@ -1,0 +1,16 @@
+[
+  {
+    "usuario": "RASANFE",
+    "nombre": "Ramón San Félix Ramón",
+    "password": "795E4995AAEED4928CD6CAF7667728F4",
+    "usuario_movil": "RAMON",
+    "pin_movil": "560D5A777627ED67A3292C55B91F9F2D"
+  },
+  {
+    "usuario": "INVITADO",
+    "nombre": "Invitado de la charla",
+    "password": "ADE4F39BE0B8AE458F56A298A5C21463",
+    "usuario_movil": "PUBLICO",
+    "pin_movil": "5C99810100A9332B515601469FEAA2D9"
+  }
+]

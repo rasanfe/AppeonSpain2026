@@ -317,6 +317,39 @@ body {
 .movimientos-table .fecha-hora { font-weight: 600; font-variant-numeric: tabular-nums; }
 .movimientos-table .dispositivo { color: var(--texto-suave); }
 
+/* Borrar en los 5 minutos siguientes a fichar, como WebFichar: la fila lleva
+   un reloj, se puede elegir y aparece el botón Borrar encima del pie. */
+.origen-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.delete-indicator { opacity: 0.6; display: inline-flex; }
+
+.movimientos-table tbody tr.fila-clickable { cursor: pointer; }
+.movimientos-table tbody tr.fila-clickable:hover { background-color: #f5f5f5; }
+.movimientos-table tbody tr.fila-seleccionada { background-color: #e8f5e9; }
+
+.movimientos-acciones {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.btn-accion-fichaje {
+  padding: 8px 0;
+  width: 90px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+}
+.btn-accion-fichaje:hover { filter: brightness(0.9); }
+
 .badge-circular {
   display: inline-flex;
   align-items: center;
@@ -497,18 +530,25 @@ body {
 .msgbox-error { border-top: 3px solid #f87171; }
 .msgbox-confirm { border-top: 3px solid var(--azul); }
 
-/* Historial (reutiliza la caja del messagebox) */
-.msgbox-container.historial { max-width: 520px; }
-.historial-dia { padding: 8px 0; border-bottom: 1px solid #eee; }
-.historial-dia:last-child { border-bottom: none; }
-.historial-fecha { font-size: 13px; font-weight: 600; text-transform: capitalize; margin-bottom: 6px; }
-.historial-horas { display: flex; flex-wrap: wrap; gap: 6px; }
-.historial-hora {
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  border: 1px solid;
-  border-radius: 6px;
-  padding: 3px 8px;
+/* En el móvil sale desde abajo, a todo el ancho, como en WebFichar */
+@media (max-width: 480px) {
+  .msgbox-overlay { padding: 16px; align-items: flex-end; }
+  .msgbox-container {
+    min-width: unset;
+    max-width: unset;
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    animation: msgboxSlideUp .3s ease-out;
+  }
+  .msgbox-header { padding: 16px; }
+  .msgbox-body { padding: 20px 16px; }
+  .msgbox-footer { padding: 16px; flex-direction: column-reverse; }
+  .msgbox-btn { width: 100%; padding: 12px 20px; }
+}
+
+@keyframes msgboxSlideUp {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ===========================================================================
@@ -557,6 +597,8 @@ body {
 .fichar-page.tema-oscuro .movimientos-table td { border-bottom-color: #33475b; }
 .fichar-page.tema-oscuro .movimientos-table .fecha-hora { color: #ecf0f1; }
 .fichar-page.tema-oscuro .movimientos-table .dispositivo { color: #95a5a6; }
+.fichar-page.tema-oscuro .movimientos-table tbody tr.fila-clickable:hover { background-color: #22303c; }
+.fichar-page.tema-oscuro .movimientos-table tbody tr.fila-seleccionada { background-color: #2c3e50; }
 .fichar-page.tema-oscuro .empty-state-text { color: #bdc3c7; }
 .fichar-page.tema-oscuro .empty-state-hint { color: #7f8c8d; }
 .fichar-page.tema-oscuro .main-footer { color: #7f8c8d; }

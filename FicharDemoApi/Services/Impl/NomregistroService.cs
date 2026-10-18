@@ -18,147 +18,124 @@
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 
-using SnapObjects.Data;
-using DWNet.Data;
+using FicharApi.Config;
+using FicharApi.Data;
 using FicharApi.Models;
 
 namespace FicharApi.Services.Impl
 {
     public class NomregistroService : INomregistroService
     {
-        private readonly DataContext _dataContext;
-        
-        public NomregistroService(DefaultDataContext dataContext)
+        private readonly JsonDatabase _db;
+
+        public NomregistroService(JsonDatabase db)
         {
-            _dataContext = dataContext;
+            _db = db;
         }
 
-
-        public async Task<IEnumerable<Dw_Import_Nomregistro>> RetrieveAsync(string as_empresa,string as_empelado,DateTime? adt_fecha, CancellationToken cancellationToken)
+        /// <summary>Los fichajes de un dia, en orden. Sin empleado, los de toda la empresa.</summary>
+        public async Task<IEnumerable<Fichaje>> RetrieveAsync(string as_empresa, string as_empelado, DateTime? adt_fecha, CancellationToken cancellationToken)
 		{
-			var dataStore = new DataStore<Dw_Import_Nomregistro>(_dataContext);
-            
-			await dataStore.RetrieveAsync(new object[] { as_empresa, as_empelado, adt_fecha }, cancellationToken);
-            
-			return dataStore;
+            if (adt_fecha is null) return Enumerable.Empty<Fichaje>();
+
+            return await RetrieveHistoricoAsync(as_empresa, as_empelado, adt_fecha.Value, adt_fecha.Value, cancellationToken);
 		}
-        
+
+        /// <summary>
+        /// Los fichajes de un rango de dias (ambos incluidos), en orden: el historial del mes.
+        ///
+        /// Los que todavia no han pasado NO salen: los datos de la demo llegan
+        /// generados hasta el dia de la charla, y un fichaje del futuro no existe.
+        /// Asi cada dia de ensayo se ve como una jornada real hasta la hora actual.
+        /// </summary>
+        public async Task<IEnumerable<Fichaje>> RetrieveHistoricoAsync(string empresa, string empleado, DateTime desde, DateTime hasta, CancellationToken cancellationToken)
+        {
+            var fichajes = await _db.LeerAsync<Nomregistro>(DemoConstants.TablaFichajes, cancellationToken);
+            var ahora = DateTime.Now;
+
+            return fichajes
+                .Where(f => Texto.Igual(f.IOMd, empresa))
+                .Where(f => string.IsNullOrWhiteSpace(empleado) || Texto.Igual(f.EnNo, empleado))
+                .Where(f => f.Fecha?.Date >= desde.Date && f.Fecha?.Date <= hasta.Date)
+                .Where(f => f.Fecha <= ahora)
+                .OrderBy(f => f.Fecha)
+                .Select(Fichaje.Desde)
+                .ToList();
+        }
+
+        /// <summary>Lo que hacia el procedimiento almacenado 'fichar' de 2024.</summary>
         public async Task FicharAsync(string empresa, string empleado, double latitud, double longitud, CancellationToken cancellationToken)
         {
-            using (var transaction = _dataContext.BeginTransaction())
+            var usuarios = await _db.LeerAsync<Usuarios>(DemoConstants.TablaUsuarios, cancellationToken);
+            var nombre = usuarios
+                .FirstOrDefault(u => Texto.Igual(u.Empresa, empresa) && Texto.Igual(u.Empleado, empleado))
+                ?.Usuario?.Trim();
+
+            if (!int.TryParse(empresa?.Trim(), out var numEmpresa) || !int.TryParse(empleado?.Trim(), out var numEmpleado))
             {
-                const int mode = FicharApi.Config.DemoConstants.ModoFichaje;
-                const string procedureName = "fichar";
-                
-                try
-                {
-                    // SnapObjects 5.x ya no admite parametros sueltos en un
-                    // procedimiento almacenado: hay que envolverlos en ParamValue.
-                    // (En la version 4.2 de 2024 bastaba con pasar los valores.)
-                    object[] idParams = new object[]
-                     {
-                        ParamValue.New<string>("empresa",  empresa),
-                        ParamValue.New<string>("empleado", empleado),
-                        ParamValue.New<int>("mode",        mode),
-                        ParamValue.New<double>("latitud",  latitud),
-                        ParamValue.New<double>("longitud", longitud)
-                     };
-
-                    var rowsAffected = await _dataContext.SqlExecutor.ExecuteProcedureAsync(procedureName, idParams, cancellationToken);
-                    
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    throw new Exception($"Error al ejecutar el procedimiento almacenado fichar: {ex.Message}");
-                }
-            }
-        }
-        
-            
-        public async Task CambiarHoraAsync(int id, DateTime nuevaHora, CancellationToken cancellationToken)
-        {
-            using (var transaction = _dataContext.BeginTransaction())
-            {
-                try
-                {
-                    int mode = await GetModeFromIdAsync(id, cancellationToken);
-
-                    if (mode != 32 ) //Insertado lo dejamos como insertado.
-                    {
-                        mode = 35; // Modificado
-                    }
-                    
-                    // Actualizar Hora
-                    var sql = @"UPDATE nomregistro
-                                  SET nomregistro.datetime = @Nuevahora,
-                                      mode = @mode  
-                                WHERE nomregistro.no=@id";
-
-                    object[] parametersUpdate = new object[]
-                    {
-                        nuevaHora,
-                        mode,
-                        id
-                    };
-                    
-                    var rowsAffected = await _dataContext.SqlExecutor.ExecuteAsync(sql, parametersUpdate, cancellationToken);
-                    
-                    // Confirmar la transacción
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    // Deshacer la transacción en caso de error
-                    transaction.Rollback();
-                    throw new Exception($"Error al actualizar nomregistro: {ex.Message}");
-                }
+                throw new Exception($"Empresa '{empresa}' o empleado '{empleado}' no validos.");
             }
 
-        }
-
-        public async Task BorrarFichajeAsync(int id, CancellationToken cancellationToken)
-        {
-            using (var transaction = _dataContext.BeginTransaction())
+            await _db.ModificarAsync<Nomregistro>(DemoConstants.TablaFichajes, fichajes =>
             {
-                try
+                fichajes.Add(new Nomregistro
                 {
-                    // Actualizar Hora
-                    var sql = @"DELETE nomregistro
-                                     WHERE nomregistro.no=@id";
-
-                    object[] parametersDelete = new object[]
-                     {
-                        id
-                     };
-
-                    var rowsAffected = await _dataContext.SqlExecutor.ExecuteAsync(sql, parametersDelete, cancellationToken);
-
-                    // Confirmar la transacción
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    // Deshacer la transacción en caso de error
-                    transaction.Rollback();
-                    throw new Exception($"Error al eliminar nomregistro: {ex.Message}");
-                }
-            }
+                    No = fichajes.Count == 0 ? 1 : fichajes.Max(f => f.No) + 1,
+                    Mchn = DemoConstants.TerminalApp,
+                    EnNo = numEmpleado,
+                    Name = nombre,
+                    Mode = DemoConstants.ModoFichaje,
+                    IOMd = numEmpresa,
+                    Fecha = AhoraSinZona(),
+                    Latitud = latitud,
+                    Longitud = longitud
+                });
+            }, cancellationToken);
         }
 
-        private async Task<int> GetModeFromIdAsync(int id, CancellationToken cancellationToken)
+        public async Task<ResultadoBorrado> BorrarFichajeAsync(int id, string empresa, string empleado, CancellationToken cancellationToken)
         {
-             var sql = @"
-                    SELECT mode 
-                    FROM nomregistro
-                    WHERE nomregistro.no = @Id;";
+            var resultado = ResultadoBorrado.NoEncontrado;
 
-            int mode = await _dataContext.SqlExecutor.ScalarAsync<int>(sql, new object[] { id }, cancellationToken);
+            await _db.ModificarAsync<Nomregistro>(DemoConstants.TablaFichajes, fichajes =>
+            {
+                var fichaje = fichajes.FirstOrDefault(f => f.No == id && EsDe(f, empresa, empleado));
+                if (fichaje is null) return;
 
-            return mode;
+                if (!DentroDelPlazo(fichaje))
+                {
+                    resultado = ResultadoBorrado.FueraDePlazo;
+                    return;
+                }
+
+                fichajes.Remove(fichaje);
+                resultado = ResultadoBorrado.Borrado;
+            }, cancellationToken);
+
+            return resultado;
         }
 
-        
+        /// <summary>
+        /// Se fichó hace menos de DemoConstants.MinutosParaBorrar. Lo decide la API,
+        /// no la web: el reloj de la pantalla es solo el aviso.
+        /// </summary>
+        private static bool DentroDelPlazo(Nomregistro fichaje) =>
+            fichaje.Fecha is { } fecha
+            && fecha <= DateTime.Now   // uno de los generados para mas adelante no se toca
+            && DateTime.Now - fecha <= TimeSpan.FromMinutes(DemoConstants.MinutosParaBorrar);
+
+        /// <summary>El fichaje es de ese empleado de esa empresa.</summary>
+        private static bool EsDe(Nomregistro fichaje, string empresa, string empleado) =>
+            Texto.Igual(fichaje.IOMd, empresa) && Texto.Igual(fichaje.EnNo, empleado);
+
+        /// <summary>
+        /// La hora local tal cual, sin zona y al milisegundo (como el datetime de
+        /// SQL Server): asi viaja a la web igual que los fichajes de antes.
+        /// </summary>
+        private static DateTime AhoraSinZona()
+        {
+            var ahora = DateTime.Now;
+            return new DateTime(ahora.Ticks - ahora.Ticks % TimeSpan.TicksPerMillisecond, DateTimeKind.Unspecified);
+        }
     }
 }

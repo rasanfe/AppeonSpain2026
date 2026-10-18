@@ -25,8 +25,8 @@ PersonDemo/_BackupFiles/
 *.pbd
 *.usr.opt
 *.ini
-# Excepcion: sin el no arranca la ventana de fichar. Solo lleva el tema,
-# la URL local y el usuario/PIN de DEMO (publicos a proposito).
+# Excepcion: sin el no arranca la ventana de fichar. Solo lleva el tema y
+# la URL local (el usuario movil sale de PersonDemo/Database/usuarios.json).
 !PersonDemo/Setting.ini
 # Ejecutable compilado y su config (ruta del runtime de esta maquina)
 *.exe
@@ -34,10 +34,10 @@ PersonDemo/persondemo.xml
 *.log
 
 # --- Datos de la demo ---
-datos/*.bak
-datos/*.db
-datos/*.mdf
-datos/*.ldf
+# Los fichajes que se graban al ensayar: la API los crea desde
+# nomregistro.original.json, que es lo que va al repositorio.
+FicharDemoApi/Database/nomregistro.json
+FicharDemoApi/Database/*.tmp
 # La configuracion del grid la graba PowerBuilder al cerrar la ventana
 PersonDemo/grid_config.json
 

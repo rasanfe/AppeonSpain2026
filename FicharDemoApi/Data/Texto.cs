@@ -9,7 +9,7 @@
 //║                                                                                 ║
 //╚═════════════════════════════════════════════════════════════════════════════════╝
 //
-//10-09-2026: IEmpleadosService.cs
+//17-10-2026: Texto.cs
 //Autor: Ramón San Félix Ramón
 //Email: rsanfelix@rsrsystem.com
 //Web:   rsrsystem.blogspot.com
@@ -18,18 +18,20 @@
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SnapObjects.Data;
-
-namespace FicharApi.Services
+namespace FicharApi.Data
 {
-    public interface IEmpleadosService
+    /// <summary>
+    /// Comparaciones como las hacia SQL Server, para que nada cambie al dejarlo:
+    /// sin distinguir mayusculas y sin contar los espacios del final (los char(n)).
+    /// "ramon" entra igual que "RAMON".
+    /// </summary>
+    public static class Texto
     {
-        Task<string> CompuestoEmpleadoAsync(string empresa, string empleado, CancellationToken cancellationToken);
-           
+        public static bool Igual(string? a, string? b) =>
+            string.Equals(a?.Trim(), b?.Trim(), StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>Un codigo de texto contra una columna numerica, como el convert(int, ...) del SQL.</summary>
+        public static bool Igual(int? numero, string? texto) =>
+            numero.HasValue && int.TryParse(texto?.Trim(), out var valor) && valor == numero.Value;
     }
-    
 }

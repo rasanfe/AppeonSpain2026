@@ -21,37 +21,25 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Calendario } from '../components/Calendario'
+import { HistorialModal } from '../components/HistorialModal'
 import { MessageBox, type TipoMensaje } from '../components/MessageBox'
+import { TablaMovimientos, esEntrada } from '../components/TablaMovimientos'
 import { APP_CONFIG } from '../config/appConfig'
 import { colorEmpresa, colorSecundario } from '../config/empresa'
 import {
+  borrarFichaje,
   cerrarSesion,
   esHoy,
   fichar,
   leerSesion,
   listarFichajes,
-  listarUltimosDias,
   type Fichaje,
 } from '../services/api'
 import { avisoNativo, cerrarVentanaPb, estaEmbebida, temaPb } from '../services/powerbuilder'
 import { temaDePowerBuilder } from '../config/tema'
 
-/** El procedimiento 'fichar' graba todos los marcajes iguales: entrada y
- *  salida se deducen del orden, igual que en el ERP. */
-const esEntrada = (indice: number) => indice % 2 === 0
-
-const hora = (iso: string | null) =>
-  iso ? new Date(iso).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }) : ''
-
 const fechaLarga = (f: Date) =>
   f.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-
-/** De dónde vino el fichaje, según el Mode que guarda el procedimiento. */
-function dispositivo(modo: number | null) {
-  if (modo === 32) return 'Manual'
-  if (modo === 35) return 'Modificado'
-  return 'App'
-}
 
 export function Fichar() {
   const sesion = leerSesion()
@@ -70,7 +58,7 @@ export function Fichar() {
   const [dia, setDia] = useState(new Date())
   const [fichajes, setFichajes] = useState<Fichaje[]>([])
   const [fichando, setFichando] = useState(false)
-  const [historial, setHistorial] = useState<{ fecha: Date; fichajes: Fichaje[] }[] | null>(null)
+  const [verHistorial, setVerHistorial] = useState(false)
   const [aviso, setAviso] = useState<{ tipo: TipoMensaje; texto: string } | null>(null)
   const [confirmarSalir, setConfirmarSalir] = useState(false)
 
@@ -110,11 +98,9 @@ export function Fichar() {
     try {
       const tipo = siguienteEsEntrada ? 'Entrada' : 'Salida'
       await fichar(sesion!.empresa!, sesion!.empleado!)
-      // Dentro del ERP el aviso lo pinta PowerBuilder (nativo). Fuera, esta web.
-      // Mismo código, dos experiencias.
-      if (!avisoNativo('Fichaje registrado', tipo + ' de ' + sesion!.usuario)) {
-        setAviso({ tipo: 'success', texto: tipo + ' registrada correctamente.' })
-      }
+      // Dentro del ERP el aviso lo pinta PowerBuilder (nativo). Fuera no hay
+      // aviso: el fichaje aparece en la tabla, como en WebFichar.
+      avisoNativo('Fichaje registrado', tipo + ' de ' + sesion!.usuario)
       await refrescar()
     } catch {
       setAviso({ tipo: 'error', texto: 'No se ha podido fichar.' })
@@ -123,9 +109,18 @@ export function Fichar() {
     }
   }
 
-  async function abrirHistorial() {
-    setHistorial([])
-    setHistorial(await listarUltimosDias(sesion!.empresa!, sesion!.empleado!, 15))
+  async function borrar(fichaje: Fichaje) {
+    try {
+      await borrarFichaje(fichaje.No)
+      await refrescar()
+    } catch {
+      // Lo normal: se acabaron los 5 minutos entre elegirlo y confirmar
+      setAviso({ tipo: 'error', texto: 'No se ha podido borrar el fichaje.' })
+    }
+  }
+
+  function abrirHistorial() {
+    setVerHistorial(true)
   }
 
   function salir() {
@@ -189,46 +184,14 @@ export function Fichar() {
             <span className="fecha-seleccionada">{fechaLarga(dia)}</span>
           </div>
 
-          <div className="movimientos-table">
-            <table>
-              <thead>
-                <tr style={{ backgroundColor: color }}>
-                  <th>Tipo</th>
-                  <th>Fecha y hora</th>
-                  <th>Origen</th>
-                </tr>
-              </thead>
-              <tbody>
-                {fichajes.length === 0 ? (
-                  <tr>
-                    <td className="empty-state-cell" colSpan={3}>
-                      <div className="empty-state">
-                        <p className="empty-state-text">Sin fichajes este día</p>
-                        <p className="empty-state-hint">
-                          {hoyMismo ? 'Pulsa Entrada para empezar' : 'Elige otro día en el calendario'}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  fichajes.map((f, i) => (
-                    <tr key={f.No}>
-                      <td>
-                        <span
-                          className="badge-circular"
-                          style={{ backgroundColor: esEntrada(i) ? acento : secundario }}
-                        >
-                          {esEntrada(i) ? 'E' : 'S'}
-                        </span>
-                      </td>
-                      <td className="fecha-hora">{hora(f.Datetime)}</td>
-                      <td className="dispositivo">{dispositivo(f.Mode)}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+          <TablaMovimientos
+            fichajes={fichajes}
+            hoyMismo={hoyMismo}
+            color={color}
+            acento={acento}
+            secundario={secundario}
+            onBorrar={borrar}
+          />
 
           <div className="movimientos-footer" style={{ borderTopColor: color }}>
             <div className="movimientos-footer-row">
@@ -244,7 +207,7 @@ export function Fichar() {
               {/* Historial: solo aquí cuando estamos dentro de PowerBuilder.
                   Fuera, el botón principal de la derecha YA es Historial. */}
               {embebida && (
-                <div className="footer-item footer-historial" onClick={() => void abrirHistorial()}>
+                <div className="footer-item footer-historial" onClick={abrirHistorial}>
                   <span className="footer-label" style={{ color: acento }}>Historial</span>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={acento}
                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -292,7 +255,7 @@ export function Fichar() {
           <button
             className="btn-salir-main"
             style={{ backgroundColor: secundario }}
-            onClick={() => void abrirHistorial()}
+            onClick={abrirHistorial}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -309,49 +272,17 @@ export function Fichar() {
         <span className="main-footer-version">v{APP_CONFIG.version}  {APP_CONFIG.fechaBuild}</span>
       </div>
 
-      {/* Historial: los últimos días con fichajes */}
-      {historial !== null && (
-        <div className="msgbox-overlay" onClick={() => setHistorial(null)}>
-          <div className="msgbox-container historial" onClick={(e) => e.stopPropagation()}>
-            <div className="msgbox-header">
-              <div className="msgbox-header-left">
-                <h3 className="msgbox-title">Historial de fichajes</h3>
-              </div>
-            </div>
-            <div className="msgbox-body">
-              {historial.length === 0 ? (
-                <p>Sin fichajes en los últimos días.</p>
-              ) : (
-                historial.map((d) => (
-                  <div key={d.fecha.toISOString()} className="historial-dia">
-                    <div className="historial-fecha" style={{ color: acento }}>{fechaLarga(d.fecha)}</div>
-                    <div className="historial-horas">
-                      {d.fichajes.map((f, i) => (
-                        <span
-                          key={f.No}
-                          className="historial-hora"
-                          style={{ borderColor: esEntrada(i) ? acento : secundario }}
-                        >
-                          {esEntrada(i) ? 'E' : 'S'} {hora(f.Datetime)}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-            <div className="msgbox-footer">
-              <button
-                className="msgbox-btn msgbox-btn-primary"
-                style={{ background: 'linear-gradient(135deg, ' + color + ' 0%, #0059b3 100%)' }}
-                onClick={() => setHistorial(null)}
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Historial del mes del día elegido: calco del de WebFichar */}
+      <HistorialModal
+        visible={verHistorial}
+        onClose={() => setVerHistorial(false)}
+        empresa={sesion.empresa ?? ''}
+        empleado={sesion.empleado ?? ''}
+        color={color}
+        acento={acento}
+        secundario={secundario}
+        fecha={dia}
+      />
 
       {/* Confirmación de cierre de sesión, como la de WebFichar. */}
       <MessageBox

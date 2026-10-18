@@ -24,7 +24,7 @@ namespace FicharApi.Services
 {
     public interface IAuthService
     {
-        Usuarios Login(AuthUser AuthRequest);
+        Task<Usuarios> LoginAsync(AuthUser AuthRequest, CancellationToken cancellationToken);
           
 
     }

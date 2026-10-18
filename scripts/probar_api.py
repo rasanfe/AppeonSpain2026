@@ -2,10 +2,11 @@
 """Prueba de humo de la API de la demo, de punta a punta.
 
 Recorre el mismo camino que hara PowerBuilder en la charla:
-    login -> ticket de un solo uso -> canje -> leer fichajes.
+    login -> ticket de un solo uso -> canje -> leer fichajes -> fichar.
 
-Lee TODO del .env (incluido el PIN del usuario, que saca de la BD) y no
-imprime nunca una credencial completa.
+El puerto sale del .env y el usuario de prueba de la propia tabla
+(FicharDemoApi/Database/usuarios_mobile.json). No imprime nunca un PIN.
+El fichaje de prueba se borra al terminar: los datos quedan como estaban.
 
 Uso:  python scripts/probar_api.py
 """
@@ -17,6 +18,7 @@ from datetime import date
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[1]
+USUARIOS = RAIZ / 'FicharDemoApi' / 'Database' / 'usuarios_mobile.json'
 
 
 def leer_env() -> dict:
@@ -29,23 +31,14 @@ def leer_env() -> dict:
     return env
 
 
-def usuario_de_prueba(env: dict):
-    """Saca de la BD un usuario activo para probar el login."""
-    import pyodbc
-    cadena = (
-        'DRIVER={ODBC Driver 17 for SQL Server};'
-        f"SERVER={env['DEMO_DB_HOST']},{env.get('DEMO_DB_PORT', '1433')};"
-        f"DATABASE={env['DEMO_DB_NAME']};UID={env['DEMO_DB_USER']};"
-        f"PWD={env['DEMO_DB_PASSWORD']};TrustServerCertificate=yes;"
-    )
-    with pyodbc.connect(cadena, timeout=10) as cn:
-        fila = cn.cursor().execute(
-            'select top 1 usuario, pin, empresa, empleado from Usuarios_mobile'
-        ).fetchone()
+def usuario_de_prueba():
+    """El primer usuario activo de la tabla de usuarios."""
+    usuarios = json.loads(USUARIOS.read_text(encoding='utf-8'))
+    fila = next((u for u in usuarios if u.get('activo')), None)
     if not fila:
-        print('ERROR: Usuarios_mobile esta vacia.')
+        print('ERROR: no hay ningun usuario activo en', USUARIOS)
         sys.exit(1)
-    return [str(c).strip() for c in fila]
+    return [str(fila[c]).strip() for c in ('Usuario', 'Pin', 'empresa', 'empleado')]
 
 
 def llamar(url, cuerpo=None, token=None, metodo=None):
@@ -64,8 +57,10 @@ def llamar(url, cuerpo=None, token=None, metodo=None):
 
 def main() -> int:
     env = leer_env()
-    base = 'http://localhost:%s/api' % env.get('DEMO_API_PORT', '5080')
-    usuario, pin, empresa, empleado = usuario_de_prueba(env)
+    # 127.0.0.1 y no localhost: Python prueba antes ::1 (IPv6), la API solo
+    # escucha en IPv4 y cada llamada se comia 2 segundos de espera.
+    base = 'http://127.0.0.1:%s/api' % env.get('DEMO_API_PORT', '5080')
+    usuario, pin, empresa, empleado = usuario_de_prueba()
     print('Usuario de prueba: %s (empresa %s, empleado %s)\n' % (usuario, empresa, empleado))
 
     fallos = 0
@@ -109,13 +104,30 @@ def main() -> int:
 
     # 6. Con el token de la web, leer los fichajes de hoy
     hoy = date.today().isoformat()
-    codigo, r = llamar('%s/Nomregistro/Retrieve/%s/%s/%s' % (base, empresa, empleado, hoy),
+    url_hoy = '%s/Nomregistro/Retrieve/%s/%s/%s' % (base, empresa, empleado, hoy)
+    codigo, antes = llamar(url_hoy, token=token_web)
+    if codigo != 200:
+        print('  MAL fichajes ->', codigo, antes)
+        return 1
+    print('  OK  fichajes de hoy -> 200, %d registros' % len(antes))
+
+    # 7. Fichar: se graba en el JSON y aparece al volver a leer
+    codigo, r = llamar('%s/Nomregistro/Fichar' % base,
+                       {'empresa': empresa, 'empleado': empleado, 'latitud': 0, 'longitud': 0},
                        token=token_web)
-    if codigo == 200:
-        print('  OK  fichajes de hoy -> 200, %d registros' % len(r))
-    else:
-        print('  MAL fichajes ->', codigo, r)
-        fallos += 1
+    _, despues = llamar(url_hoy, token=token_web)
+    nuevos = [f for f in despues if f['No'] not in {a['No'] for a in antes}]
+    ok = codigo == 200 and len(nuevos) == 1
+    print('  %s  fichar -> %s, %d fichaje nuevo (se espera 1)' % ('OK ' if ok else 'MAL', codigo, len(nuevos)))
+    fallos += 0 if ok else 1
+
+    # 8. Se borra el de prueba: los datos quedan como estaban
+    for f in nuevos:
+        llamar('%s/Nomregistro/BorrarFichaje' % base, {'id': f['No']}, token=token_web)
+    _, final = llamar(url_hoy, token=token_web)
+    ok = len(final) == len(antes)
+    print('  %s  borrar el de prueba -> quedan %d (se esperan %d)' % ('OK ' if ok else 'MAL', len(final), len(antes)))
+    fallos += 0 if ok else 1
 
     print('\n%s' % ('TODO CORRECTO.' if fallos == 0 else '%d COMPROBACIONES FALLIDAS.' % fallos))
     return 0 if fallos == 0 else 1

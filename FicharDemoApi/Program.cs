@@ -20,38 +20,32 @@
 
 using System.Text;
 using System.IO.Compression;
-using DWNet.Data.AspNetCore;
-using FicharApi;
 using FicharApi.Config;
+using FicharApi.Data;
 using FicharApi.Services;
 using FicharApi.Services.Impl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using SnapObjects.Data;
-using SnapObjects.Data.AspNetCore;
-using SnapObjects.Data.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // --- Configuracion: el .env manda -------------------------------------------
 EnvFile.Cargar(builder.Configuration, AppContext.BaseDirectory);
-var ajustes = new DemoSettings(builder.Configuration);
+var ajustes = new DemoSettings(builder.Configuration, AppContext.BaseDirectory);
 builder.Services.AddSingleton(ajustes);
 builder.WebHost.UseUrls($"http://0.0.0.0:{ajustes.Puerto}");
 
-// --- MVC + DataWindow de Appeon ---------------------------------------------
-builder.Services.AddControllers(m =>
-{
-    m.UseCoreIntegrated();
-    m.UsePowerBuilderIntegrated();
-});
+// --- MVC --------------------------------------------------------------------
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddGzipCompression(CompressionLevel.Fastest);
+builder.Services.AddResponseCompression(o => o.Providers.Add<GzipCompressionProvider>());
+builder.Services.Configure<GzipCompressionProviderOptions>(o => o.Level = CompressionLevel.Fastest);
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddDataContext<DefaultDataContext>(
-    m => m.UseSqlServer(ajustes.ConnectionString));
+// --- Los datos: un JSON por tabla en Database/ (sin SQL Server) -------------
+builder.Services.AddSingleton<JsonDatabase>();
 
 // --- Seguridad: esto es lo que en 2024 NO estaba ----------------------------
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -107,14 +101,12 @@ builder.Services.AddCors(o => o.AddPolicy(CorsDesarrollo, p => p
     .AllowAnyHeader()
     .AllowAnyMethod()));
 
-// --- Servicios de negocio (los de 2024, tal cual) ---------------------------
+// --- Servicios: parten de la API de 2024, rehechos sobre JSON ---------------
+// Solo lo que usan los clientes de la demo (login, ticket, consultar y fichar).
 builder.Services.AddSingleton<ITicketService, TicketService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<INomregistroService, NomregistroService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUsuariosService, UsuariosService>();
-builder.Services.AddScoped<IEmpleadosService, EmpleadosService>();
-builder.Services.AddScoped<ISistemaService, SistemaService>();
 
 var app = builder.Build();
 
@@ -125,6 +117,7 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+app.UseResponseCompression();
 app.UseCors(CorsDesarrollo);
 
 // --- La API sirve TAMBIEN la web: un solo proceso para toda la demo ---------
@@ -135,7 +128,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseDataWindow();
+
+// Una ruta de la API que no existe es un 404, no la pagina de la web
+app.Map("/api/{**resto}", () => Results.NotFound());
 
 // Rutas del router de React que no son de la API -> index.html
 app.MapFallbackToFile("index.html");

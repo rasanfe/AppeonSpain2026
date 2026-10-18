@@ -9,7 +9,7 @@
 //║                                                                                 ║
 //╚═════════════════════════════════════════════════════════════════════════════════╝
 //
-//10-09-2026: DefaultDataContext.cs
+//17-10-2026: ClaimsDelToken.cs
 //Autor: Ramón San Félix Ramón
 //Email: rsanfelix@rsrsystem.com
 //Web:   rsrsystem.blogspot.com
@@ -18,30 +18,25 @@
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 
-using SnapObjects.Data;
-using SnapObjects.Data.SqlServer;
+using System.Security.Claims;
+using FicharApi.Config;
 
-namespace FicharApi
+namespace FicharApi.Controllers
 {
-    public class DefaultDataContext : SqlServerDataContext
+    /// <summary>
+    /// Quien es el usuario de la peticion, segun su JWT. La equivalencia
+    /// usuario -> empresa/empleado (usuarios_mobile) se resolvio en el login
+    /// y viaja dentro del token: no hay que fiarse de lo que mande el cliente.
+    /// </summary>
+    public static class ClaimsDelToken
     {
-        public DefaultDataContext(string connectionString)
-            : this(new SqlServerDataContextOptions<DefaultDataContext>(connectionString))
-        {
+        public static string? Claim(this ClaimsPrincipal usuario, string tipo) =>
+            usuario.FindFirst(tipo)?.Value;
 
-        }
+        public static string? Empresa(this ClaimsPrincipal usuario) =>
+            usuario.Claim(DemoConstants.ClaimEmpresa);
 
-        public DefaultDataContext(IDataContextOptions<DefaultDataContext> options)
-            : base(options)
-        {
-            options.TrimSpaces = true;
-            options.DelimitIdentifier = false;
-        }
-
-        public DefaultDataContext(IDataContextOptions options)
-            : base(options)
-        {
-
-        }
+        public static string? Empleado(this ClaimsPrincipal usuario) =>
+            usuario.Claim(DemoConstants.ClaimEmpleado);
     }
 }

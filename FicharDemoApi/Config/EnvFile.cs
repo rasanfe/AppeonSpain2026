@@ -49,13 +49,20 @@ namespace FicharApi.Config
         }
 
         /// <summary>Busca el .env hacia arriba desde la carpeta de ejecucion.</summary>
-        private static string? LocalizarEnv(string rutaBase)
+        private static string? LocalizarEnv(string rutaBase) =>
+            BuscarHaciaArriba(rutaBase, ruta => File.Exists(Path.Combine(ruta, ".env")))
+                is { } dir ? Path.Combine(dir, ".env") : null;
+
+        /// <summary>
+        /// Primera carpeta, de <paramref name="rutaBase"/> hacia arriba, que cumple
+        /// la condicion. Asi la demo arranca igual con dotnet run que desde bin.
+        /// </summary>
+        public static string? BuscarHaciaArriba(string rutaBase, Func<string, bool> condicion)
         {
             var dir = new DirectoryInfo(rutaBase);
             while (dir is not null)
             {
-                var candidato = Path.Combine(dir.FullName, ".env");
-                if (File.Exists(candidato)) return candidato;
+                if (condicion(dir.FullName)) return dir.FullName;
                 dir = dir.Parent;
             }
             return null;

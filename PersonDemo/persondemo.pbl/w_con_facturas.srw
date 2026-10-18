@@ -69,7 +69,7 @@ Long ll_RowCount
 String ls_jsonData
 
 adw.setredraw(false)		
-ls_jsonData = gf_get_jsondata_from_file(gs_dir+"\data2026.json")
+ls_jsonData = gf_get_jsondata_from_file(gs_fichero_facturas)
 ll_RowCount = adw.of_cargar_json(ls_jsonData)
 
 adw.setredraw(true)

@@ -11,6 +11,11 @@ end forward
 
 global variables
 String gs_fichero_ini, gs_dir
+// Carpeta de los JSON que hacen de base de datos, el de las facturas del año
+// y el de los usuarios del ERP
+String gs_dir_datos, gs_fichero_facturas, gs_fichero_usuarios
+// Usuario del ERP que ha hecho login (w_login)
+String gs_usuario
 Boolean gb_isPBIDE
 w_visor gw_visor[]
 
@@ -89,6 +94,9 @@ end if
 
 gs_dir = GetCurrentDirectory()
 gs_fichero_ini = gs_dir+"\Setting.ini"
+gs_dir_datos = gs_dir+"\Database"
+gs_fichero_facturas = gs_dir_datos+"\data2026.json"
+gs_fichero_usuarios = gs_dir_datos+"\usuarios.json"
 
 //Temas PowerBulder 2025
 ls_theme=ProfileString(gs_fichero_ini, "Setup", "Theme", "")
@@ -99,6 +107,7 @@ IF ls_theme <> "Do Not Use Themes"  and ls_theme <> "" THEN
 END IF
 
 
-Open(w_frame)
+// Primero el login del ERP: con SUS usuarios, que no son los de la app movil
+Open(w_login)
 end event
 

@@ -29,13 +29,26 @@ namespace FicharApi.Services
 {
     public interface INomregistroService
     {
-		Task<IEnumerable<Dw_Import_Nomregistro>> RetrieveAsync(string as_empresa, string as_empelado, DateTime? adt_fecha, CancellationToken cancellationToken);
+		Task<IEnumerable<Fichaje>> RetrieveAsync(string as_empresa, string as_empelado, DateTime? adt_fecha, CancellationToken cancellationToken);
+
+        Task<IEnumerable<Fichaje>> RetrieveHistoricoAsync(string empresa, string empleado, DateTime desde, DateTime hasta, CancellationToken cancellationToken);
 
         Task FicharAsync(string empresa, string empleado, double latitud, double longitud, CancellationToken cancellationToken);
 
-        Task CambiarHoraAsync(int id, DateTime nuevaHora, CancellationToken cancellationToken);
+        /// <summary>
+        /// Borra un fichaje PROPIO y solo dentro de los minutos que hay para
+        /// arrepentirse (DemoConstants.MinutosParaBorrar).
+        /// </summary>
+        Task<ResultadoBorrado> BorrarFichajeAsync(int id, string empresa, string empleado, CancellationToken cancellationToken);
+    }
 
-        Task BorrarFichajeAsync(int id, CancellationToken cancellationToken);
+    public enum ResultadoBorrado
+    {
+        Borrado,
+        /// <summary>No existe, o es de otro empleado.</summary>
+        NoEncontrado,
+        /// <summary>Es suyo, pero ya pasaron los minutos para borrarlo.</summary>
+        FueraDePlazo
 
     }
 }

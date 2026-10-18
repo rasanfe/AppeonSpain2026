@@ -52,11 +52,11 @@ namespace FicharApi.Controllers
         [AllowAnonymous]
         [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public ActionResult<AuthResponse> Login([FromBody] AuthUser peticion)
+        public async Task<ActionResult<AuthResponse>> Login([FromBody] AuthUser peticion)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var usuario = _auth.Login(peticion);
+            var usuario = await _auth.LoginAsync(peticion, HttpContext.RequestAborted);
             if (usuario is null || !usuario.IsValid) return Unauthorized();
 
             return Ok(_tokens.CrearToken(usuario, peticion.Origen));
@@ -118,12 +118,12 @@ namespace FicharApi.Controllers
         private Usuarios UsuarioDelToken() => new()
         {
             Usuario = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? Claim("sub"),
-            Empresa = Claim(DemoConstants.ClaimEmpresa),
-            Empleado = Claim(DemoConstants.ClaimEmpleado),
+            Empresa = User.Empresa(),
+            Empleado = User.Empleado(),
             Grupo = Claim(DemoConstants.ClaimGrupo),
             IsValid = true
         };
 
-        private string? Claim(string tipo) => User.FindFirst(tipo)?.Value;
+        private string? Claim(string tipo) => User.Claim(tipo);
     }
 }

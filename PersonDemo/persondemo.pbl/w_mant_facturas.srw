@@ -281,7 +281,7 @@ public function boolean wf_abrir_json ();
 */
 Long ll_filas
 
-is_fichero_json = gs_dir + "/data2026.json"
+is_fichero_json = gs_fichero_facturas
 
 IF IsValid(ids_datos) THEN DESTROY ids_datos
 ids_datos = CREATE nvo_ds_json

@@ -41,4 +41,8 @@ export const APP_CONFIG = {
   refrescoMs: 3000,
   /** Lo que se espera al GPS antes de fichar sin coordenadas. */
   gpsTimeoutMs: 4000,
+  /** Minutos para borrar un fichaje recien hecho, como en WebFichar: mientras
+   *  tanto la fila lleva un reloj. Lo hace cumplir la API; tiene que casar con
+   *  DemoConstants.MinutosParaBorrar de FicharDemoApi. */
+  minutosParaBorrar: 5,
 } as const

@@ -18,52 +18,47 @@
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 
-using SnapObjects.Data;
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 
 namespace FicharApi.Models
 {
-    [Table("Usuarios_mobile", Schema = "dbo")]
-    [SqlParameter("usuario", typeof(string))]
-    [SqlParameter("password", typeof(string))]
-    [SqlWhere("(usuario = :usuario)")]
-    [SqlAndWhere("(pin = :password)")]
+    /// <summary>Una fila de Database/usuarios_mobile.json: quien puede entrar y con que PIN.</summary>
     public class Usuarios
     {
-        [Key]
-        [SqlColumn("usuario")]
+        [JsonPropertyName("Usuario")]
         public string? Usuario { get; set; }
-        
-        [SqlColumn("pin")]
+
+        [JsonPropertyName("Pin")]
         public string? Pin { get; set; }
-        
-        [SqlColumn("empresa")]
+
+        [JsonPropertyName("empresa")]
         public string? Empresa { get; set; }
-        
-        [SqlColumn("empleado")]
+
+        [JsonPropertyName("empleado")]
         public string? Empleado { get; set; }
 
-        [SqlColumn("grupo")]
+        [JsonPropertyName("grupo")]
         public string? Grupo { get; set; }
 
 
-        [SqlColumn("activo")]
+        [JsonPropertyName("activo")]
         public bool? Activo { get; set; }
 
-        [NotMapped]
+        // --- No son columnas de la tabla ---
+
+        [JsonIgnore]
         public string? ConnectionID { get; set; }
 
 
-        [NotMapped]
+        [JsonIgnore]
         public bool IsValid { get; set; }
 
-        [NotMapped]
+        [JsonIgnore]
         public string? Token { get; set; }
 
-        [NotMapped]
+        [JsonIgnore]
         public DateTime Expiration { get; set; }
 
     }

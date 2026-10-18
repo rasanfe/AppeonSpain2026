@@ -59,7 +59,7 @@ nvo_ds_json lds_sum
 String ls_jsonData, ls_jsonFile, ls_empresa
 String ls_importes[12]
 
-ls_jsonFile= gs_dir+"\"+"data"+as_anyo+".json"
+ls_jsonFile= gs_dir_datos+"\"+"data"+as_anyo+".json"
 
 lds_sum = CREATE nvo_ds_json
 
@@ -132,7 +132,7 @@ lstr_t.ld_albaranes = 15200.30
 // Datos reales para facturas
 lds_data = Create nvo_ds_json
 
-ls_jsonData = gf_get_jsondata_from_file(gs_dir+"\data2026.json")
+ls_jsonData = gf_get_jsondata_from_file(gs_fichero_facturas)
 ll_RowCount = lds_data.of_cargar_json(ls_jsonData)
 
 For ll_Row = 1 to ll_RowCount

@@ -1,0 +1,26 @@
+[
+  {
+    "Usuario": "RAMON",
+    "Pin": "0000",
+    "empresa": "1",
+    "empleado": "15",
+    "grupo": "1",
+    "activo": true
+  },
+  {
+    "Usuario": "APPEON",
+    "Pin": "1111",
+    "empresa": "1",
+    "empleado": "20",
+    "grupo": "2",
+    "activo": true
+  },
+  {
+    "Usuario": "PUBLICO",
+    "Pin": "2222",
+    "empresa": "1",
+    "empleado": "21",
+    "grupo": "2",
+    "activo": true
+  }
+]

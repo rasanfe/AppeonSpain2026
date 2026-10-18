@@ -11,12 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- ORM DataWindow de Appeon: la 5.1.0 ya soporta net10.0 -->
-    <PackageReference Include="DWNet.Data" Version="5.1.0" />
-    <PackageReference Include="DWNet.Data.AspNetCore" Version="5.1.0" />
-    <PackageReference Include="SnapObjects.Data" Version="5.1.0" />
-    <PackageReference Include="SnapObjects.Data.AspNetCore" Version="5.1.0" />
-    <PackageReference Include="SnapObjects.Data.SqlServer" Version="5.1.0" />
+    <!-- Los datos (Database/*.json) se leen y escriben en su sitio: que el
+         build NO los copie a bin, o la API acabaria escribiendo en la copia -->
+    <Content Remove="Database\**" />
+    <None Include="Database\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Seguridad: lo que en 2024 NO estaba -->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />

@@ -24,8 +24,9 @@ global w_fichar_html w_fichar_html
 type variables
 Boolean ib_RegisterEvent = FALSE
 
-// Configuracion: vive en Setting.ini, seccion [FicharDemo]. Ni la URL ni el
-// usuario ni el PIN se escriben en el codigo.
+// La URL vive en Setting.ini, seccion [FicharDemo]. El usuario y el PIN de la
+// app movil NO: salen de la tabla de usuarios del ERP, que guarda con que
+// usuario movil entra cada usuario del ERP (n_cst_usuarios.of_equivalencia).
 String is_url_base
 String is_usuario
 String is_pin
@@ -58,9 +59,12 @@ public subroutine wf_leer_configuracion ();
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 
+n_cst_usuarios lnv_usuarios
+
 is_url_base = ProfileString(gs_fichero_ini, "FicharDemo", "Url", "http://localhost:5080")
-is_usuario  = ProfileString(gs_fichero_ini, "FicharDemo", "Usuario", "")
-is_pin      = ProfileString(gs_fichero_ini, "FicharDemo", "Pin", "")
+
+// El usuario del ERP (gs_usuario) entra en la web con SU usuario movil
+lnv_usuarios.of_equivalencia(gs_usuario, is_usuario, is_pin)
 end subroutine
 
 public function boolean wf_entrar ();
@@ -102,7 +106,8 @@ Integer li_ret
 wf_leer_configuracion()
 
 IF is_usuario = "" OR is_pin = "" THEN
-	gf_mensaje("Fichar", "Falta el usuario o el PIN en la seccion [FicharDemo] de Setting.ini.")
+	gf_mensaje("Fichar", "El usuario " + gs_usuario + " no tiene usuario movil asignado." + &
+		"~r~n~r~nAsignaselo en el mantenimiento de usuarios.")
 	Return False
 END IF
 
