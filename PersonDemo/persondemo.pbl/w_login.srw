@@ -26,7 +26,7 @@ global type w_login from window
 integer x = 567
 integer y = 272
 integer width = 2062
-integer height = 1472
+integer height = 1717
 boolean titlebar = true
 string title = "PersonDemo - Login"
 boolean controlmenu = true
@@ -129,7 +129,7 @@ end event
 
 type cbx_recordar from checkbox within w_login
 integer x = 704
-integer y = 944
+integer y = 1189
 integer width = 402
 integer height = 80
 integer taborder = 30
@@ -144,7 +144,7 @@ end type
 
 type cb_cancel from commandbutton within w_login
 integer x = 1143
-integer y = 1224
+integer y = 1469
 integer width = 343
 integer height = 96
 integer taborder = 50
@@ -183,7 +183,7 @@ end event
 
 type cb_ok from commandbutton within w_login
 integer x = 640
-integer y = 1224
+integer y = 1469
 integer width = 343
 integer height = 96
 integer taborder = 40
@@ -246,7 +246,7 @@ end event
 
 type sle_password from singlelineedit within w_login
 integer x = 704
-integer y = 764
+integer y = 1009
 integer width = 937
 integer height = 80
 integer taborder = 20
@@ -259,7 +259,7 @@ end type
 
 type sle_usuario from singlelineedit within w_login
 integer x = 704
-integer y = 584
+integer y = 829
 integer width = 937
 integer height = 80
 integer taborder = 10
@@ -271,18 +271,17 @@ textcase textcase = upper!
 end type
 
 type p_logo from picture within w_login
-integer x = 128
+integer x = 300
 integer y = 56
-integer width = 1687
-integer height = 280
+integer width = 1399
+integer height = 525
 string picturename = "imagenes\logo.png"
-borderstyle borderstyle = stylelowered!
 boolean focusrectangle = false
 end type
 
 type st_password from statictext within w_login
 integer x = 361
-integer y = 764
+integer y = 1009
 integer width = 325
 integer height = 80
 integer textsize = -10
@@ -298,7 +297,7 @@ end type
 
 type st_userid from statictext within w_login
 integer x = 357
-integer y = 584
+integer y = 829
 integer width = 325
 integer height = 80
 integer textsize = -10
@@ -314,7 +313,7 @@ end type
 
 type gb_login from groupbox within w_login
 integer x = 142
-integer y = 396
+integer y = 641
 integer width = 1714
 integer height = 720
 integer textsize = -10
