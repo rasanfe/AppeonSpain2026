@@ -38,8 +38,13 @@ declare global {
       ue_close_window?: (arg: string) => void
       ue_gf_msgbox?: (json: string) => void
     }
+    /** Lo llama PowerBuilder cuando el usuario cambia el tema en w_setup. */
+    setTema?: (nombre: string) => void
   }
 }
+
+/** Aviso interno de que el tema ha cambiado, para que la pantalla se repinte. */
+export const EVENTO_TEMA = 'temapb'
 
 /** Lo marca la URL con la que PowerBuilder abre la web (?embedded=true). */
 export function marcarEmbebida(embebida: boolean) {
@@ -54,11 +59,18 @@ export function estaEmbebida(): boolean {
 export function marcarTemaPb(tema: string | null) {
   if (tema) sessionStorage.setItem(CLAVE_TEMA, tema)
   else sessionStorage.removeItem(CLAVE_TEMA)
+  window.dispatchEvent(new Event(EVENTO_TEMA))
 }
 
 export function temaPb(): string | null {
   return sessionStorage.getItem(CLAVE_TEMA)
 }
+
+// El tema llega en la URL al entrar (Sso.tsx), pero el usuario puede cambiarlo
+// después en el ERP con la ventana abierta: PowerBuilder llama entonces a
+//   wb_1.EvaluateJavascriptSync("window.setTema('Flat Design Dark')", ls_bruto)
+// y la web se vuelve a vestir sin recargar. Igual que window.setTheme del grid.
+window.setTema = (nombre: string) => marcarTemaPb(nombre?.trim() || null)
 
 /** ¿Hay realmente un PowerBuilder escuchando? */
 function hayPuente(): boolean {

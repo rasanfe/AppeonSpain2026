@@ -35,8 +35,8 @@ import {
   listarFichajes,
   type Fichaje,
 } from '../services/api'
-import { avisoNativo, cerrarVentanaPb, estaEmbebida, temaPb } from '../services/powerbuilder'
-import { temaDePowerBuilder } from '../config/tema'
+import { avisoNativo, cerrarVentanaPb, estaEmbebida } from '../services/powerbuilder'
+import { useTemaPb } from '../hooks/useTemaPb'
 
 const fechaLarga = (f: Date) =>
   f.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
@@ -46,7 +46,8 @@ export function Fichar() {
   const navegar = useNavigate()
   const embebida = estaEmbebida()
   // Dentro del ERP manda el tema de PowerBuilder; fuera, el color de la empresa.
-  const tema = temaDePowerBuilder(temaPb())
+  // Si el usuario lo cambia en w_setup con la ventana abierta, se repinta solo.
+  const tema = useTemaPb()
   const color = tema?.color ?? colorEmpresa(sesion?.empresa)
   // Los detalles (la "E", el día elegido, las etiquetas) necesitan un color que
   // se lea; en los temas oscuros no vale el mismo que el de los fondos.

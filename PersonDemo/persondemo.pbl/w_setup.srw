@@ -312,6 +312,7 @@ End if
 If IsValid(w_dashboard) Then 	
 	w_dashboard.wb_1.NavigateToString(w_dashboard.in_dash.of_get_html())
 End IF
+If IsValid(w_fichar_html) Then w_fichar_html.wf_cambiar_tema(ls_theme)
 
 end event
 

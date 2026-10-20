@@ -366,7 +366,7 @@ CHOOSE CASE as_menu_name
 		// Alta de factura. Si el listado esta abierto, se refresca al volver.
 		OpenSheetWithParm(w_mant_facturas, "NUEVA", this, 0, Layered!)
 	CASE "m_fichar"
-		Open(w_fichar_html)   // response!: no es un sheet del MDI
+		Open(w_fichar_html)   // popup!: no es un sheet del MDI
 	CASE "m_usuarios"
 		// Usuarios del ERP y su equivalencia con la app movil
 		OpenSheet(w_mant_usuarios, this, 0, Layered!)

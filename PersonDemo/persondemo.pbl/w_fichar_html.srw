@@ -6,17 +6,16 @@ end type
 end forward
 
 global type w_fichar_html from window
-integer width = 4311
-integer height = 2752
+integer width = 4302
+integer height = 2744
 boolean titlebar = true
-string title = "Control Horario"
-boolean minbox = false
-boolean maxbox = true
-boolean resizable = true
+boolean controlmenu = true
+boolean minbox = true
+windowtype windowtype = popup!
 long backcolor = 67108864
 string icon = "AppIcon!"
+boolean clientedge = true
 boolean center = true
-windowtype windowtype = response!
 wb_1 wb_1
 end type
 global w_fichar_html w_fichar_html
@@ -36,6 +35,7 @@ forward prototypes
 public subroutine wf_leer_configuracion ()
 public function boolean wf_entrar ()
 public subroutine wf_abrir ()
+public subroutine wf_cambiar_tema (string as_tema_pb)
 end prototypes
 
 public subroutine wf_leer_configuracion ();
@@ -225,6 +225,44 @@ public subroutine wf_abrir ();
 IF NOT wf_entrar() THEN Close(This)
 end subroutine
 
+public subroutine wf_cambiar_tema (string as_tema_pb);
+//╔═════════════════════════════════════════════════════════════════════════════════╗
+//║                                                                                 ║
+//║  ██████╗ ███████╗██████╗ ███████╗██╗   ██╗███████╗████████╗███████╗███╗   ███╗  ║
+//║  ██╔══██╗██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝██╔════╝╚══██╔══╝██╔════╝████╗ ████║  ║
+//║  ██████╔╝███████╗██████╔╝███████╗ ╚████╔╝ ███████╗   ██║   █████╗  ██╔████╔██║  ║
+//║  ██╔══██╗╚════██║██╔══██╗╚════██║  ╚██╔╝  ╚════██║   ██║   ██╔══╝  ██║╚██╔╝██║  ║
+//║  ██║  ██║███████║██║  ██║███████║   ██║   ███████║   ██║   ███████╗██║ ╚═╝ ██║  ║
+//║  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝  ║
+//║                                                                                 ║
+//╚═════════════════════════════════════════════════════════════════════════════════╝
+//
+//20-10-2026: w_fichar_html.srw · wf_cambiar_tema
+//Autor: Ramón San Félix Ramón
+//Email: rsanfelix@rsrsystem.com
+//Web:   rsrsystem.blogspot.com
+//
+//  Appeon PowerBuilder Regional Conference Spain 2026
+//  Barcelona, 27 de octubre de 2026
+//  Ponencia: «Modernizando PowerBuilder con tecnologías web»
+// Lo llama w_setup al cambiar el tema con esta ventana abierta.
+// El tema ya viajo en la URL al entrar (wf_entrar); aqui se le cambia en caliente,
+// sin recargar ni pedir otro ticket: la web se vuelve a vestir con window.setTema.
+// Es lo mismo que hace w_con_facturas.wf_cambiar_tema con el grid.
+String ls_bruto
+Integer li_rc
+
+// La web contesta "ok" si se ha podido vestir. El resultado viene ENVUELTO
+// ({"type":"string","value":"ok"}) y por referencia, como en w_con_facturas.
+li_rc = wb_1.EvaluateJavascriptSync("window.setTema ? (window.setTema('" + Trim(as_tema_pb) + "'), 'ok') : 'no'", ls_bruto)
+IF li_rc = 1 AND Pos(ls_bruto, '"ok"') > 0 THEN Return
+
+// Si no ha contestado (una web anterior que aun no sabe cambiar de tema, la PWA
+// sirviendo la version de la cache...), se vuelve a entrar: wf_entrar lee el tema
+// del Setting.ini, que w_setup acaba de grabar, y se lo pasa en la URL.
+wf_entrar()
+end subroutine
+
 on w_fichar_html.create
 this.wb_1=create wb_1
 this.Control[]={this.wb_1}
@@ -304,18 +342,17 @@ event close;
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 
-// Nada que deshacer: es una response! y no toca el fondo del MDI.
+// Nada que deshacer: es una popup! que flota sobre el frame y no toca el fondo
+// del MDI (ni el fondo ni las hojas pueden taparla).
 end event
 
 type wb_1 from webbrowser within w_fichar_html
 event ue_close_window ( string as_arg )
 event ue_gf_msgbox ( string as_json )
-integer x = 0
-integer y = 0
 integer width = 4283
 integer height = 2632
-boolean border = false
 boolean bringtotop = true
+boolean border = false
 end type
 
 event ue_close_window(string as_arg);
@@ -417,3 +454,4 @@ IF ib_RegisterEvent = FALSE THEN
 	END IF
 END IF
 end event
+
