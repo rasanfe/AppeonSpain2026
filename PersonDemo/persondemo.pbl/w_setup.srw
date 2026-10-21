@@ -282,6 +282,8 @@ event clicked;
 //  Barcelona, 27 de octubre de 2026
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 String  ls_theme
+Window  lw_sheet, lw_maximizadas[]
+Integer li_maximizadas, li_i
 
 //[Setup]
 ls_theme = Trim(ddlb_theme.Text )
@@ -298,8 +300,27 @@ ElseIF ls_theme <> is_theme  AND  ls_theme = "Do Not Use Themes" THEN
 	MessageBox("Configuración Guardada", "Reinicie la aplicación para que los cambios tengan efecto.")
 	close(parent)
 ELSE
+	// Apaño (21-10-2026): ApplyTheme revienta en pbtheme.dll si hay una hoja MDI maximizada
+	// (y w_frame las maximiza todas con MaximizeAllTabbedSheets). Se pasan a Normal!, se aplica
+	// el tema y se vuelven a maximizar. Bug enviado a Appeon con un ejemplo mínimo.
+	If IsValid(w_frame) Then
+		lw_sheet = w_frame.GetFirstSheet()
+		Do While IsValid(lw_sheet)
+			If lw_sheet.WindowState = Maximized! Then
+				li_maximizadas++
+				lw_maximizadas[li_maximizadas] = lw_sheet
+				lw_sheet.WindowState = Normal!
+			End If
+			lw_sheet = w_frame.GetNextSheet(lw_sheet)
+		Loop
+	End If
+
 	ApplyTheme (is_theme_path + ls_theme)
 	is_theme = ls_theme
+
+	For li_i = 1 To li_maximizadas
+		If IsValid(lw_maximizadas[li_i]) Then lw_maximizadas[li_i].WindowState = Maximized!
+	Next
 END IF
 
 //Trampa pàra refrescar el Tema:
