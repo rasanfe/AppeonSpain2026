@@ -30,6 +30,7 @@ end prototypes
 type variables
 string is_table
 boolean ib_grid_ready = false
+boolean ib_RegisterEvent = false
 
 // Donde se recuerda como dejo el usuario el grid (orden de columnas,
 // ocultas, anchos, alineacion). Lo guarda PowerBuilder: la web solo pinta.
@@ -507,6 +508,39 @@ ls_factura = Trim(dw_1.GetItemString(ll_fila, "factura"))
 OpenSheetWithParm(w_mant_facturas, ls_serie + "|" + ls_factura, w_frame, 0, Layered!)
 end event
 
+event navigationstart;
+//╔═════════════════════════════════════════════════════════════════════════════════╗
+//║                                                                                 ║
+//║  ██████╗ ███████╗██████╗ ███████╗██╗   ██╗███████╗████████╗███████╗███╗   ███╗  ║
+//║  ██╔══██╗██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝██╔════╝╚══██╔══╝██╔════╝████╗ ████║  ║
+//║  ██████╔╝███████╗██████╔╝███████╗ ╚████╔╝ ███████╗   ██║   █████╗  ██╔████╔██║  ║
+//║  ██╔══██╗╚════██║██╔══██╗╚════██║  ╚██╔╝  ╚════██║   ██║   ██╔══╝  ██║╚██╔╝██║  ║
+//║  ██║  ██║███████║██║  ██║███████║   ██║   ███████║   ██║   ███████╗██║ ╚═╝ ██║  ║
+//║  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝  ║
+//║                                                                                 ║
+//╚═════════════════════════════════════════════════════════════════════════════════╝
+//
+//10-09-2026: w_con_facturas.srw · navigationstart
+//Autor: Ramón San Félix Ramón
+//Email: rsanfelix@rsrsystem.com
+//Web:   rsrsystem.blogspot.com
+//
+//  Appeon PowerBuilder Regional Conference Spain 2026
+//  Barcelona, 27 de octubre de 2026
+//  Ponencia: «Modernizando PowerBuilder con tecnologías web»
+// El camino de vuelta: JavaScript -> PowerBuilder.
+// Sin RegisterEvent, JavaScript no puede llamar a PowerBuilder.
+// Se registra una sola vez, en la primera navegacion (igual que w_fichar_html).
+Integer li_rc
+
+IF ib_RegisterEvent = FALSE THEN
+	li_rc = wb_1.RegisterEvent("ue_dblclick")
+	IF li_rc = 1 THEN
+		ib_RegisterEvent = TRUE
+	END IF
+END IF
+end event
+
 event navigationcompleted;
 //╔═════════════════════════════════════════════════════════════════════════════════╗
 //║                                                                                 ║
@@ -529,12 +563,8 @@ event navigationcompleted;
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 // Aplicar tema del grid según tema de PowerBuilder y encender el mantenimiento
 String ls_theme
-Integer li_rc
 
-// El camino de vuelta: JavaScript -> PowerBuilder
-IF ib_grid_ready = False THEN
-	li_rc = wb_1.RegisterEvent("ue_dblclick")
-END IF
+// El camino de vuelta (RegisterEvent) se abre en navigationstart, como en w_fichar_html.
 
 ls_theme = ProfileString(gs_fichero_ini, "Setup", "Theme ", "Do Not Use Themes")
 wf_cambiar_tema(ls_theme)
