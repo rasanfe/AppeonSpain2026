@@ -491,21 +491,30 @@ event ue_dblclick(string as_row);
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 /*
 	Doble clic en el grid: la web NO abre la factura, se lo pide a PowerBuilder.
-	El grid manda el numero de fila del DataWindow (_dw_row); de ahi salen la
-	serie y el numero de factura, y se abre la ventana de mantenimiento nativa.
+	El grid manda el numero de fila del DataWindow (_dw_row). La clave de la
+	factura la saca PowerBuilder de SU DataWindow (el invisible que alimenta el
+	grid), la empaqueta en un JSON y se la pasa a la ventana de mantenimiento:
+	{"empresa":"1","anyo":"2026","serie":"1","factura":"1000"}
 */
-Long ll_fila
-String ls_serie, ls_factura
+Long ll_fila, ll_raiz
+String ls_json
+JsonGenerator ljg_factura
 
 ll_fila = Long(as_row)
 IF ll_fila < 1 OR ll_fila > dw_1.RowCount() THEN Return
 
-ls_serie = Trim(dw_1.GetItemString(ll_fila, "serie"))
-ls_factura = Trim(dw_1.GetItemString(ll_fila, "factura"))
+ljg_factura = CREATE JsonGenerator
+ll_raiz = ljg_factura.CreateJsonObject()
+ljg_factura.AddItemString(ll_raiz, "empresa", Trim(dw_1.GetItemString(ll_fila, "empresa")))
+ljg_factura.AddItemString(ll_raiz, "anyo", Trim(dw_1.GetItemString(ll_fila, "anyo")))
+ljg_factura.AddItemString(ll_raiz, "serie", Trim(dw_1.GetItemString(ll_fila, "serie")))
+ljg_factura.AddItemString(ll_raiz, "factura", Trim(dw_1.GetItemString(ll_fila, "factura")))
+ls_json = ljg_factura.GetJsonString()
+DESTROY ljg_factura
 
 // Se abre como SHEET del MDI, igual que en el ejemplo: aparece en el tab.
 // Al cerrarse, ella misma refresca este listado si hubo cambios.
-OpenSheetWithParm(w_mant_facturas, ls_serie + "|" + ls_factura, w_frame, 0, Layered!)
+OpenSheetWithParm(w_mant_facturas, ls_json, w_frame, 0, Layered!)
 end event
 
 event navigationstart;

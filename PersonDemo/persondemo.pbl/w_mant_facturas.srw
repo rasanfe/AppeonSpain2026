@@ -61,7 +61,7 @@ String is_anyo
 // cabecera de la lista, como en la ventana del ejemplo.
 String is_columna_buscar = "razon"
 
-// Parametro con el que se abrio ("serie|factura" o "NUEVA")
+// Parametro con el que se abrio: el JSON de la factura o "NUEVA"
 String is_parametro
 
 // Los datos viven en un JSON, no en una base de datos
@@ -112,10 +112,12 @@ public subroutine wf_inicializar ();
 //  Ponencia: «Modernizando PowerBuilder con tecnologías web»
 /*
 	Lo que antes hacia el open. Se llama con Post: la ventana ya esta pintada.
-	Parametro: "serie|factura", o "NUEVA"
+	Parametro: el JSON de la factura, o "NUEVA"
+	{"empresa":"1","anyo":"2026","serie":"1","factura":"1000"}
 */
-String ls_serie, ls_factura
-Long ll_barra, ll_fila
+String ls_empresa, ls_anyo, ls_serie, ls_factura
+Long ll_raiz, ll_fila
+JsonParser ljp_factura
 
 SetPointer(HourGlass!)
 
@@ -136,11 +138,23 @@ IF Upper(is_parametro) = "NUEVA" THEN
 	Return
 END IF
 
-ll_barra = Pos(is_parametro, "|")
-IF ll_barra > 0 THEN
-	ls_serie = Left(is_parametro, ll_barra - 1)
-	ls_factura = Mid(is_parametro, ll_barra + 1)
+// La clave llega en un JSON: lo monta w_con_facturas con su DataWindow invisible.
+// El fichero es de una empresa y un año, asi que para buscar basta serie y factura.
+IF Left(is_parametro, 1) = "{" THEN
+	ljp_factura = CREATE JsonParser
+	IF ljp_factura.LoadString(is_parametro) = "" THEN
+		ll_raiz = ljp_factura.GetRootItem()
+		ls_empresa = ljp_factura.GetItemString(ll_raiz, "empresa")
+		ls_anyo    = ljp_factura.GetItemString(ll_raiz, "anyo")
+		ls_serie   = ljp_factura.GetItemString(ll_raiz, "serie")
+		ls_factura = ljp_factura.GetItemString(ll_raiz, "factura")
+	END IF
+	DESTROY ljp_factura
 END IF
+IF IsNull(ls_empresa) THEN ls_empresa = ""
+IF IsNull(ls_anyo) THEN ls_anyo = ""
+IF IsNull(ls_serie) THEN ls_serie = ""
+IF IsNull(ls_factura) THEN ls_factura = ""
 
 IF ls_factura = "" THEN
 	// Sin factura concreta: se muestra la primera de la lista
@@ -153,7 +167,8 @@ IF ls_factura = "" THEN
 END IF
 
 IF NOT wf_mostrar(ls_serie, ls_factura) THEN
-	gf_mensaje("Facturas", "No se encuentra la factura " + ls_serie + "/" + ls_factura)
+	gf_mensaje("Facturas", "No se encuentra la factura " + ls_serie + "/" + ls_factura + &
+		" (empresa " + ls_empresa + ", año " + ls_anyo + ")")
 	SetPointer(Arrow!)
 	Return
 END IF
