@@ -92,13 +92,13 @@ ls_html += "  <meta name=" + char(34) + "viewport" + char(34) + " content=" + ch
 ls_html += "  <title>Dashboard Simple</title>" + "~r~n"
 // Chart.js viaja con la aplicación (js\chart.umd.min.js): la charla se da sin internet.
 // Va INCRUSTADO en el HTML: con NavigateToString el documento no tiene carpeta y un
-// <script src> relativo no cargaría. Si faltara el fichero, se tira del CDN.
+// <script src> relativo no cargaría. Nunca se tira del CDN (27-10-2026): en la charla
+// lo hizo sin avisar porque faltaba el fichero. Si falta, se dice y no se pinta.
 ls_chartjs = of_leer_fichero_texto(gs_dir + "\js\chart.umd.min.js")
-IF Len(ls_chartjs) > 0 THEN
-	ls_html += "  <script>" + "~r~n" + ls_chartjs + "~r~n" + "  </script>" + "~r~n"
-ELSE
-	ls_html += "  <script src=" + char(34) + "https://cdn.jsdelivr.net/npm/chart.js" + char(34) + "></script>" + "~r~n"
+IF Len(ls_chartjs) = 0 THEN
+	gf_mensaje("Dashboard", "No se encuentra Chart.js en:~r~n" + gs_dir + "\js\chart.umd.min.js~r~n~r~nEl gráfico no se puede pintar.")
 END IF
+ls_html += "  <script>" + "~r~n" + ls_chartjs + "~r~n" + "  </script>" + "~r~n"
 ls_html += "  <script>" + "~r~n"
 ls_html += "    function openPB(tipo) { " + "~r~n"
 ls_html += "      if(window.webBrowser && typeof window.webBrowser.ue_open===" + char(39) + "function" + char(39) + "){ " + "~r~n"
